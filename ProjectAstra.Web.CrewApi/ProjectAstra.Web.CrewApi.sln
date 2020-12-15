@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectAstra.Web.CrewApi.Presentation", "ProjectAstra.Web.CrewApi.Presentation\ProjectAstra.Web.CrewApi.Presentation.csproj", "{B08560E2-A2D4-40F9-8E7F-5E9693D55E05}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectAstra.Web.CrewApi.Infrastructure", "ProjectAstra.Web.CrewApi.Infrastructure\ProjectAstra.Web.CrewApi.Infrastructure.csproj", "{8956B632-2C25-4D3C-8061-9B6051EC6D20}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectAstra.Web.CrewApi.Core", "ProjectAstra.Web.CrewApi.Core\ProjectAstra.Web.CrewApi.Core.csproj", "{5AE132D3-B7AF-40AC-B279-278D7A35988F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B08560E2-A2D4-40F9-8E7F-5E9693D55E05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B08560E2-A2D4-40F9-8E7F-5E9693D55E05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B08560E2-A2D4-40F9-8E7F-5E9693D55E05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B08560E2-A2D4-40F9-8E7F-5E9693D55E05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8956B632-2C25-4D3C-8061-9B6051EC6D20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8956B632-2C25-4D3C-8061-9B6051EC6D20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8956B632-2C25-4D3C-8061-9B6051EC6D20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8956B632-2C25-4D3C-8061-9B6051EC6D20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AE132D3-B7AF-40AC-B279-278D7A35988F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AE132D3-B7AF-40AC-B279-278D7A35988F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AE132D3-B7AF-40AC-B279-278D7A35988F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AE132D3-B7AF-40AC-B279-278D7A35988F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
