@@ -26,6 +26,7 @@ namespace ProjectAstra.Web.CrewApi.Infrastructure.DataContext
         {
             modelBuilder.Entity<Shuttle>().HasIndex(shuttle => shuttle.Name);
             modelBuilder.Entity<TeamOfExplorers>().HasIndex(team => team.Name);
+            modelBuilder.Entity<Explorer>().HasIndex(explorer => explorer.Name);
         }
     }
 }
