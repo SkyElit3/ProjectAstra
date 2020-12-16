@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using ProjectAstra.Web.CrewApi.Core.Exceptions;
 using ProjectAstra.Web.CrewApi.Core.Interfaces;
 using ProjectAstra.Web.CrewApi.Core.Models;
 
@@ -40,6 +41,8 @@ namespace ProjectAstra.Web.CrewApi.Infrastructure.Repositories
         public async Task<Shuttle> DeleteShuttle(Guid id)
         {
             var toDeleteShuttle = await _dataContext.Shuttles.FirstOrDefaultAsync(t => t.Id.Equals(id));
+            if(toDeleteShuttle is null)
+                throw new RepositoryException("Shuttle is not in the repository.");
             _dataContext.Shuttles.Remove(toDeleteShuttle);
             await _dataContext.SaveChangesAsync();
             return toDeleteShuttle;

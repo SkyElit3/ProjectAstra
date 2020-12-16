@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Pomelo.EntityFrameworkCore.MySql.Storage;
 using ProjectAstra.Web.CrewApi.Core.Interfaces;
 using ProjectAstra.Web.CrewApi.Core.Services;
@@ -41,7 +42,7 @@ namespace ProjectAstra.Web.CrewApi.Presentation
             });
         }
         
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env,ILogger<Startup> logger)
         {
             if (env.IsDevelopment())
             {
@@ -53,6 +54,7 @@ namespace ProjectAstra.Web.CrewApi.Presentation
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGet("/", async context => { await context.Response.WriteAsync("Hello World!"); });
+                endpoints.MapDefaultControllerRoute();
             });
         }
     }

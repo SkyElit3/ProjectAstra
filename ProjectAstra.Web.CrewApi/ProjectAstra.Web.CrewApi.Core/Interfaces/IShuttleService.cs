@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using ProjectAstra.Web.CrewApi.Core.Models;
 
 namespace ProjectAstra.Web.CrewApi.Core.Interfaces
