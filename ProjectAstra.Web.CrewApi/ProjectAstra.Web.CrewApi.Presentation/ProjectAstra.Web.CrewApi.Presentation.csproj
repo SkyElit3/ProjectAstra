@@ -14,4 +14,8 @@
       <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="3.2.4" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\ProjectAstra.Web.CrewApi.Infrastructure\ProjectAstra.Web.CrewApi.Infrastructure.csproj" />
+    </ItemGroup>
+
 </Project>
