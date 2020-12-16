@@ -24,9 +24,9 @@ namespace ProjectAstra.Web.CrewApi.Infrastructure.DataContext
 
         private void SetIndexes(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Shuttle>().HasIndex(shuttle => shuttle.Name);
-            modelBuilder.Entity<TeamOfExplorers>().HasIndex(team => team.Name);
-            modelBuilder.Entity<Explorer>().HasIndex(explorer => explorer.Name);
+            modelBuilder.Entity<Shuttle>().HasIndex(shuttle => shuttle.Name).IsUnique();
+            modelBuilder.Entity<TeamOfExplorers>().HasIndex(team => team.Name).IsUnique();
+            modelBuilder.Entity<Explorer>().HasIndex(explorer => explorer.Name).IsUnique();
         }
     }
 }
