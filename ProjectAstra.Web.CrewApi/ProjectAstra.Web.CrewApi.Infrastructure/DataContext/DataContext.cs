@@ -18,8 +18,10 @@ namespace ProjectAstra.Web.CrewApi.Infrastructure.DataContext
         private void SetIndexes(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Shuttle>().HasIndex(shuttle => shuttle.Name);
+            modelBuilder.Entity<TeamOfExplorers>().HasIndex(team => team.Name);
         }
 
         public DbSet<Shuttle> Shuttles { get; set; }
+        public DbSet<TeamOfExplorers> TeamsOfExplorers { get; set; }
     }
 }
