@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ProjectAstra.Web.CrewApi.Core.Models
 {
@@ -10,6 +11,8 @@ namespace ProjectAstra.Web.CrewApi.Core.Models
 
         public Guid ShuttleId { get; set; }
         public Shuttle Shuttle { get; set; }
+        
+        public List<Explorer> Explorers { get; set; }
         
     }
 }

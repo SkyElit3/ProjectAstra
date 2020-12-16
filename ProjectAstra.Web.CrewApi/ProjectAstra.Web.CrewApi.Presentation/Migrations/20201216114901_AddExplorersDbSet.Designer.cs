@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectAstra.Web.CrewApi.Infrastructure.DataContext;
 
 namespace ProjectAstra.Web.CrewApi.Presentation.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20201216114901_AddExplorersDbSet")]
+    partial class AddExplorersDbSet
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,12 +32,7 @@ namespace ProjectAstra.Web.CrewApi.Presentation.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("longtext CHARACTER SET latin1");
 
-                    b.Property<Guid>("TeamOfExplorersId")
-                        .HasColumnType("char(36)");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("TeamOfExplorersId");
 
                     b.ToTable("Explorers");
 
@@ -110,15 +107,6 @@ namespace ProjectAstra.Web.CrewApi.Presentation.Migrations
                         .HasColumnType("int");
 
                     b.HasDiscriminator().HasValue("Robot");
-                });
-
-            modelBuilder.Entity("ProjectAstra.Web.CrewApi.Core.Models.Explorer", b =>
-                {
-                    b.HasOne("ProjectAstra.Web.CrewApi.Core.Models.TeamOfExplorers", "TeamOfExplorers")
-                        .WithMany("Explorers")
-                        .HasForeignKey("TeamOfExplorersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("ProjectAstra.Web.CrewApi.Core.Models.TeamOfExplorers", b =>
