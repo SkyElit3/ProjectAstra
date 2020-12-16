@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -10,7 +7,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Pomelo.EntityFrameworkCore.MySql.Storage;
+using ProjectAstra.Web.CrewApi.Core.Interfaces;
+using ProjectAstra.Web.CrewApi.Core.Services;
 using ProjectAstra.Web.CrewApi.Infrastructure.DataContext;
+using ProjectAstra.Web.CrewApi.Infrastructure.Repositories;
 using ServerVersion = Pomelo.EntityFrameworkCore.MySql.Storage.ServerVersion;
 
 namespace ProjectAstra.Web.CrewApi.Presentation
@@ -25,6 +25,10 @@ namespace ProjectAstra.Web.CrewApi.Presentation
         }
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllers().ConfigureApiBehaviorOptions(options => { });
+            services.AddScoped<IShuttleService, ShuttleService>();
+            services.AddScoped<IShuttleRepo, ShuttleRepo>();
+            
             services.AddDbContext<DataContext>(options =>
             {
                 options.UseMySql(Configuration.GetConnectionString("DefaultConnection"),
