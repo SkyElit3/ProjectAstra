@@ -29,21 +29,20 @@ namespace ProjectAstra.Web.CrewApi.Presentation.Controllers
 
         [HttpPost]
         [Route("/[controller]/add")]
-        public async Task<Shuttle> AddShuttle([FromBody] Shuttle inputShuttle)
+        public async Task<bool> AddShuttle([FromBody] Shuttle inputShuttle)
         {
             return await _service.CreateShuttle(inputShuttle);
         }
 
         [HttpDelete]
         [Route("/[controller]/delete")]
-        public async Task<Shuttle> DeleteShuttle([FromQuery] string guidData)
+        public async Task<bool> DeleteShuttle([FromQuery] string guidData)
         {
             if (Guid.TryParse(guidData, out var guid))
                 return await _service.DeleteShuttle(guid);
-            return null;
+            return false;
         }
-        
-        
+
         [HttpPut]
         [Route("/[controller]/update")]
         public async Task<Shuttle> UpdateShuttle([FromBody] Shuttle inputShuttle)

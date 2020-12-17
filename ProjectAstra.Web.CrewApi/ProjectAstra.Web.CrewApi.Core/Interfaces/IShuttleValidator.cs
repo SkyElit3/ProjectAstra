@@ -1,11 +1,6 @@
-﻿using ProjectAstra.Web.CrewApi.Core.Models;
-
-namespace ProjectAstra.Web.CrewApi.Core.Interfaces
+﻿namespace ProjectAstra.Web.CrewApi.Core.Interfaces
 {
-    public interface IShuttleValidator
+    public interface IShuttleValidator : IValidator
     {
-        public IShuttleValidator ValidateMaxCrewCapacity();
-
-        public IShuttleValidator ValidateName();
     }
 }

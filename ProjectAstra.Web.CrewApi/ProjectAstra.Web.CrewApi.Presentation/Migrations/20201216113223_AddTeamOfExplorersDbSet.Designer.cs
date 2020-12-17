@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using ProjectAstra.Web.CrewApi.Infrastructure.DataContext;
+using ProjectAstra.Web.CrewApi.Infrastructure.Data;
 
 namespace ProjectAstra.Web.CrewApi.Presentation.Migrations
 {

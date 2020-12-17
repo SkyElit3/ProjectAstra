@@ -1,4 +1,5 @@
-﻿using ProjectAstra.Web.CrewApi.Core.Exceptions;
+﻿using ProjectAstra.Web.CrewApi.Core.Enums;
+using ProjectAstra.Web.CrewApi.Core.Exceptions;
 using ProjectAstra.Web.CrewApi.Core.Interfaces;
 using ProjectAstra.Web.CrewApi.Core.Models;
 
@@ -6,31 +7,30 @@ namespace ProjectAstra.Web.CrewApi.Core.Validators
 {
     public class ShuttleValidator : IShuttleValidator
     {
-        // TODO: throw validation exceptions
-        private Shuttle _shuttle;
-
-        public ShuttleValidator(Shuttle inputShuttle)
+        public bool Validate(IEntity entity)
         {
-            _shuttle = inputShuttle;
+            return ValidateName((Shuttle) entity) && ValidateMaxCrewCapacity((Shuttle) entity);
         }
 
-        public IShuttleValidator ValidateMaxCrewCapacity()
+        private static bool ValidateMaxCrewCapacity(Shuttle inputShuttle)
         {
-            if (_shuttle.MaxCrewCapacity <= 0)
-                throw new ValidationException("Shuttle maxCrewCapacity cannot be 0 or less.");
-            if (_shuttle.TeamOfExplorers is null) return this;
-            if (_shuttle.TeamOfExplorers.Explorers is null) return this;
-            if (_shuttle.TeamOfExplorers.Explorers.Count > _shuttle.MaxCrewCapacity)
-                throw new ValidationException(
-                    "Shuttle's Team of Explorers crew size exceeds the Shuttle maxCrewCapacity.");
-            return this;
+            if (inputShuttle.MaxCrewCapacity <= 0)
+                throw new CrewApiException("Shuttle maxCrewCapacity cannot be 0 or less.",
+                    ExceptionTypeEnum.ValidationException);
+            if (inputShuttle.TeamOfExplorers?.Explorers is null) return true;
+            if (inputShuttle.TeamOfExplorers.Explorers.Count > inputShuttle.MaxCrewCapacity)
+                throw new CrewApiException(
+                    "Shuttle's Team of Explorers crew size exceeds the Shuttle maxCrewCapacity.",
+                    ExceptionTypeEnum.ValidationException);
+            return true;
         }
 
-        public IShuttleValidator ValidateName()
+        private static bool ValidateName(Shuttle inputShuttle)
         {
-            if (_shuttle.Name.Length <= 1)
-                throw new ValidationException("Shuttle's Name cannot be 1 character or less.");
-            return this;
+            if (inputShuttle.Name.Length <= 1)
+                throw new CrewApiException("Shuttle's Name cannot be 1 character or less.",
+                    ExceptionTypeEnum.ValidationException);
+            return true;
         }
     }
 }

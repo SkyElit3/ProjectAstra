@@ -3,49 +3,38 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using ProjectAstra.Web.CrewApi.Core.Exceptions;
 using ProjectAstra.Web.CrewApi.Core.Interfaces;
 using ProjectAstra.Web.CrewApi.Core.Models;
+using ProjectAstra.Web.CrewApi.Infrastructure.Data;
 
 namespace ProjectAstra.Web.CrewApi.Infrastructure.Repositories
 {
-    public class ShuttleRepo : IShuttleRepo
+    public class ShuttleRepository : IShuttleRepository
     {
-        private readonly DataContext.DataContext _dataContext;
+        private readonly DataContext _dataContext;
 
-        public ShuttleRepo(DataContext.DataContext dataContext)
+        public ShuttleRepository(DataContext dataContext)
         {
             _dataContext = dataContext;
         }
 
-        public async Task<Shuttle> GetShuttle(Guid id)
-        {
-            return await _dataContext.Shuttles.FirstOrDefaultAsync(t => t.Id.Equals(id));
-        }
-
         public async Task<List<Shuttle>> GetAllShuttles()
         {
-            return await Task.Run(() => _dataContext.Shuttles.ToListAsync());
+            return await _dataContext.Shuttles.ToListAsync();
         }
 
-        public async Task<Shuttle> CreateShuttle(Shuttle inputShuttle)
+        public async Task<bool> CreateShuttle(Shuttle inputShuttle)
         {
-            return await Task.Run(async () =>
-            {
-                await _dataContext.Shuttles.AddAsync(inputShuttle);
-                await _dataContext.SaveChangesAsync();
-                return inputShuttle;
-            });
-        }
-
-        public async Task<Shuttle> DeleteShuttle(Guid id)
-        {
-            var toDeleteShuttle = await _dataContext.Shuttles.FirstOrDefaultAsync(t => t.Id.Equals(id));
-            if(toDeleteShuttle is null)
-                throw new RepositoryException("Shuttle is not in the repository.");
-            _dataContext.Shuttles.Remove(toDeleteShuttle);
+            await _dataContext.Shuttles.AddAsync(inputShuttle);
             await _dataContext.SaveChangesAsync();
-            return toDeleteShuttle;
+            return true;
+        }
+
+        public async Task<bool> DeleteShuttle(Guid id)
+        {
+            _dataContext.Shuttles.Remove(await _dataContext.Shuttles.FirstAsync(t => t.Id.Equals(id)));
+            await _dataContext.SaveChangesAsync();
+            return true;
         }
 
         public async Task<Shuttle> UpdateShuttle(Shuttle inputShuttle)

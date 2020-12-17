@@ -10,7 +10,8 @@ using Microsoft.Extensions.Logging;
 using Pomelo.EntityFrameworkCore.MySql.Storage;
 using ProjectAstra.Web.CrewApi.Core.Interfaces;
 using ProjectAstra.Web.CrewApi.Core.Services;
-using ProjectAstra.Web.CrewApi.Infrastructure.DataContext;
+using ProjectAstra.Web.CrewApi.Core.Validators;
+using ProjectAstra.Web.CrewApi.Infrastructure.Data;
 using ProjectAstra.Web.CrewApi.Infrastructure.Repositories;
 using ServerVersion = Pomelo.EntityFrameworkCore.MySql.Storage.ServerVersion;
 
@@ -24,25 +25,19 @@ namespace ProjectAstra.Web.CrewApi.Presentation
         {
             Configuration = config;
         }
+
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers().ConfigureApiBehaviorOptions(options => { });
-            services.AddScoped<IShuttleService, ShuttleService>();
-            services.AddScoped<IShuttleRepo, ShuttleRepo>();
-            
-            services.AddDbContext<DataContext>(options =>
+            // TODO: read about CORS and how to accept explicit test endpoints through it
+            services.AddControllers().ConfigureApiBehaviorOptions(options => { }).AddNewtonsoftJson(t =>
             {
-                options.UseMySql(Configuration.GetConnectionString("DefaultConnection"),
-                    builderOptions =>
-                    {
-                        builderOptions.MigrationsAssembly("ProjectAstra.Web.CrewApi.Presentation")
-                            .ServerVersion(new ServerVersion(new Version(5, 7, 12)))
-                            .CharSet(CharSet.Latin1);
-                    });
+                t.SerializerSettings.MaxDepth = 128;
             });
+
+            ResolveDependencies(services);
         }
-        
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env,ILogger<Startup> logger)
+
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
             if (env.IsDevelopment())
             {
@@ -55,6 +50,23 @@ namespace ProjectAstra.Web.CrewApi.Presentation
             {
                 endpoints.MapGet("/", async context => { await context.Response.WriteAsync("Hello World!"); });
                 endpoints.MapDefaultControllerRoute();
+            });
+        }
+
+        private void ResolveDependencies(IServiceCollection services)
+        {
+            services.AddScoped<IShuttleService, ShuttleService>();
+            services.AddScoped<IShuttleRepository, ShuttleRepository>();
+            services.AddSingleton<IShuttleValidator, ShuttleValidator>();
+            services.AddDbContext<DataContext>(options =>
+            {
+                options.UseMySql(Configuration.GetConnectionString("DefaultConnection"),
+                    builderOptions =>
+                    {
+                        builderOptions.MigrationsAssembly("ProjectAstra.Web.CrewApi.Presentation")
+                            .ServerVersion(new ServerVersion(new Version(5, 7, 12)))
+                            .CharSet(CharSet.Latin1);
+                    });
             });
         }
     }

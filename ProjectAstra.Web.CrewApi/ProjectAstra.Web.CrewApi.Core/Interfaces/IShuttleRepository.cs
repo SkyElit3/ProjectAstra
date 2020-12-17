@@ -5,15 +5,13 @@ using ProjectAstra.Web.CrewApi.Core.Models;
 
 namespace ProjectAstra.Web.CrewApi.Core.Interfaces
 {
-    public interface IShuttleRepo
+    public interface IShuttleRepository
     {
-        public Task<Shuttle> GetShuttle(Guid id);
-
         public Task<List<Shuttle>> GetAllShuttles();
 
-        public Task<Shuttle> CreateShuttle(Shuttle inputShuttle);
+        public Task<bool> CreateShuttle(Shuttle inputShuttle);
 
-        public Task<Shuttle> DeleteShuttle(Guid id);
+        public Task<bool> DeleteShuttle(Guid id);
 
         public Task<Shuttle> UpdateShuttle(Shuttle inputShuttle);
     }
