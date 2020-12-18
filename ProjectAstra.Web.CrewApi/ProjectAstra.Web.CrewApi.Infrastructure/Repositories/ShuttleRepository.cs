@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using ProjectAstra.Web.CrewApi.Core.Interfaces;
 using ProjectAstra.Web.CrewApi.Core.Models;
 using ProjectAstra.Web.CrewApi.Infrastructure.Data;
+using ProjectAstra.Web.CrewApi.Infrastructure.Extensions;
 
 namespace ProjectAstra.Web.CrewApi.Infrastructure.Repositories
 {
@@ -41,14 +42,7 @@ namespace ProjectAstra.Web.CrewApi.Infrastructure.Repositories
         {
             var updatedShuttle = await Task.Run(() =>
             {
-                return _dataContext.Shuttles.Where(b => b.Id.Equals(inputShuttle.Id)).ToList().Select(s =>
-                {
-                    // TODO: add update by reflection
-                    s.Name = inputShuttle.Name;
-                    s.MaxCrewCapacity = inputShuttle.MaxCrewCapacity;
-                    s.TeamOfExplorers = inputShuttle.TeamOfExplorers;
-                    return s;
-                }).First();
+                return _dataContext.Shuttles.Where(b => b.Id.Equals(inputShuttle.Id)).ToList().Select(s => s.UpdateByReflection(inputShuttle)).First();
             });
             await _dataContext.SaveChangesAsync();
             return updatedShuttle;

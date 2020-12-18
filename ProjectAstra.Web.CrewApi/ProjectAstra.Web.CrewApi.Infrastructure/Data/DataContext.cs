@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProjectAstra.Web.CrewApi.Core.Enums;
 using ProjectAstra.Web.CrewApi.Core.Models;
+using ProjectAstra.Web.CrewApi.Infrastructure.Extensions;
 
 namespace ProjectAstra.Web.CrewApi.Infrastructure.Data
 {
@@ -27,10 +28,7 @@ namespace ProjectAstra.Web.CrewApi.Infrastructure.Data
 
         private void SetIndexes(ModelBuilder modelBuilder)
         {
-            // TODO : add reflection to assign all names as unique indexes
-            modelBuilder.Entity<Shuttle>().HasIndex(shuttle => shuttle.Name).IsUnique();
-            modelBuilder.Entity<TeamOfExplorers>().HasIndex(team => team.Name).IsUnique();
-            modelBuilder.Entity<Explorer>().HasIndex(explorer => explorer.Name).IsUnique();
+            modelBuilder.ModelBuilderUniqueIndexReflection();
         }
     }
 }

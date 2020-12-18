@@ -10,8 +10,8 @@ using ProjectAstra.Web.CrewApi.Infrastructure.Data;
 namespace ProjectAstra.Web.CrewApi.Presentation.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20201217154932_AddedEntityPropertiesToStringFields")]
-    partial class AddedEntityPropertiesToStringFields
+    [Migration("20201218104700_DEBUGIndexes-v5")]
+    partial class DEBUGIndexesv5
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

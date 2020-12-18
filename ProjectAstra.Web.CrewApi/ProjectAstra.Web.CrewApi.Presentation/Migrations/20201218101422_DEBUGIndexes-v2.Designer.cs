@@ -4,13 +4,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using ProjectAstra.Web.CrewApi.Core.Enums;
 using ProjectAstra.Web.CrewApi.Infrastructure.Data;
 
 namespace ProjectAstra.Web.CrewApi.Presentation.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20201216121946_UniqueIndexes")]
-    partial class UniqueIndexes
+    [Migration("20201218101422_DEBUGIndexes-v2")]
+    partial class DEBUGIndexesv2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -25,26 +26,22 @@ namespace ProjectAstra.Web.CrewApi.Presentation.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("ExplorerType")
-                        .IsRequired()
-                        .HasColumnType("longtext CHARACTER SET latin1");
+                    b.Property<int>("ExplorerType")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .HasColumnType("varchar(255) CHARACTER SET latin1");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<Guid>("TeamOfExplorersId")
                         .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
-
                     b.HasIndex("TeamOfExplorersId");
 
                     b.ToTable("Explorers");
 
-                    b.HasDiscriminator<string>("ExplorerType").HasValue("Explorer");
+                    b.HasDiscriminator<int>("ExplorerType");
                 });
 
             modelBuilder.Entity("ProjectAstra.Web.CrewApi.Core.Models.Shuttle", b =>
@@ -57,12 +54,9 @@ namespace ProjectAstra.Web.CrewApi.Presentation.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .HasColumnType("varchar(255) CHARACTER SET latin1");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
 
                     b.ToTable("Shuttles");
                 });
@@ -74,18 +68,15 @@ namespace ProjectAstra.Web.CrewApi.Presentation.Migrations
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("varchar(255) CHARACTER SET latin1");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<Guid>("ShuttleId")
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Status")
-                        .HasColumnType("longtext CHARACTER SET latin1");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
 
                     b.HasIndex("ShuttleId")
                         .IsUnique();
@@ -98,25 +89,25 @@ namespace ProjectAstra.Web.CrewApi.Presentation.Migrations
                     b.HasBaseType("ProjectAstra.Web.CrewApi.Core.Models.Explorer");
 
                     b.Property<string>("Grade")
-                        .HasColumnType("longtext CHARACTER SET latin1");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("Password")
-                        .HasColumnType("longtext CHARACTER SET latin1");
+                        .HasColumnType("varchar(100)");
 
-                    b.HasDiscriminator().HasValue("HumanCaptain");
+                    b.HasDiscriminator().HasValue(0);
                 });
 
             modelBuilder.Entity("ProjectAstra.Web.CrewApi.Core.Models.Robot", b =>
                 {
                     b.HasBaseType("ProjectAstra.Web.CrewApi.Core.Models.Explorer");
 
-                    b.Property<string>("Type")
-                        .HasColumnType("longtext CHARACTER SET latin1");
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.Property<int>("UnitsOfEnergy")
                         .HasColumnType("int");
 
-                    b.HasDiscriminator().HasValue("Robot");
+                    b.HasDiscriminator().HasValue(1);
                 });
 
             modelBuilder.Entity("ProjectAstra.Web.CrewApi.Core.Models.Explorer", b =>
