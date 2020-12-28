@@ -1,6 +1,6 @@
 ﻿namespace ProjectAstra.Web.CrewApi.Core.Enums
 {
-    public enum ExceptionTypeEnum
+    public enum ExceptionType
     {
         RepositoryException,
         ServiceException,

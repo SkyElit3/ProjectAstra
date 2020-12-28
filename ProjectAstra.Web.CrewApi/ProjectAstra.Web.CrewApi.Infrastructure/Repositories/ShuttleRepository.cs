@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using ProjectAstra.Web.CrewApi.Core.Filters;
 using ProjectAstra.Web.CrewApi.Core.Interfaces;
 using ProjectAstra.Web.CrewApi.Core.Models;
 using ProjectAstra.Web.CrewApi.Infrastructure.Data;
@@ -19,9 +20,9 @@ namespace ProjectAstra.Web.CrewApi.Infrastructure.Repositories
             _dataContext = dataContext;
         }
 
-        public async Task<List<Shuttle>> GetAllShuttles()
+        public async Task<List<Shuttle>> GetAllShuttles(ShuttleFilter filter, int pagination = 50, int skip = 0)
         {
-            return await _dataContext.Shuttles.ToListAsync();
+            return await filter.Filter(_dataContext.Shuttles.AsQueryable()).Skip(skip).Take(pagination).ToListAsync();
         }
 
         public async Task<bool> CreateShuttle(Shuttle inputShuttle)
@@ -33,19 +34,19 @@ namespace ProjectAstra.Web.CrewApi.Infrastructure.Repositories
 
         public async Task<bool> DeleteShuttle(Guid id)
         {
-            _dataContext.Shuttles.Remove(await _dataContext.Shuttles.FirstAsync(t => t.Id.Equals(id)));
+            _dataContext.Shuttles.Remove(
+                await _dataContext.Shuttles.FirstOrDefaultAsync(shuttle => shuttle.Id.Equals(id)));
             await _dataContext.SaveChangesAsync();
             return true;
         }
 
         public async Task<Shuttle> UpdateShuttle(Shuttle inputShuttle)
         {
-            var updatedShuttle = await Task.Run(() =>
-            {
-                return _dataContext.Shuttles.Where(b => b.Id.Equals(inputShuttle.Id)).ToList().Select(s => s.UpdateByReflection(inputShuttle)).First();
-            });
+            var shuttleToUpdate =
+                (await _dataContext.Shuttles.FirstOrDefaultAsync(shuttle => shuttle.Id.Equals(inputShuttle.Id)));
+            shuttleToUpdate.UpdateByReflection(inputShuttle);
             await _dataContext.SaveChangesAsync();
-            return updatedShuttle;
+            return shuttleToUpdate;
         }
     }
 }

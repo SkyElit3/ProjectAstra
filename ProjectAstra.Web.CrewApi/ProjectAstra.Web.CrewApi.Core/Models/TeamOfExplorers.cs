@@ -8,9 +8,9 @@ namespace ProjectAstra.Web.CrewApi.Core.Models
     {
         public Guid Id { get; set; }
         
-        [Column(TypeName = "varchar(100)")] public string Name { get; set; }
+        [Column(TypeName = "varchar(256)")] public string Name { get; set; }
 
-        [Column(TypeName = "varchar(100)")] public string Status { get; set; }
+        [Column(TypeName = "varchar(256)")] public string Status { get; set; }
 
         public Guid ShuttleId { get; set; }
 

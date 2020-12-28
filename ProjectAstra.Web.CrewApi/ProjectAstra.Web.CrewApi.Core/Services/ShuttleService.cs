@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using ProjectAstra.Web.CrewApi.Core.Enums;
 using ProjectAstra.Web.CrewApi.Core.Exceptions;
+using ProjectAstra.Web.CrewApi.Core.Filters;
 using ProjectAstra.Web.CrewApi.Core.Interfaces;
 using ProjectAstra.Web.CrewApi.Core.Models;
 
@@ -14,119 +14,101 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
     {
         private readonly IShuttleRepository _repository;
         private readonly IShuttleValidator _shuttleValidator;
-        private readonly ILogger<ShuttleService> _logger;
+        private const int MaxPagination = 9999;
 
-        public ShuttleService(IShuttleRepository repository, ILogger<ShuttleService> logger,
-            IShuttleValidator shuttleValidator)
+        public ShuttleService(IShuttleRepository repository, IShuttleValidator shuttleValidator)
         {
             _repository = repository;
-            _logger = logger;
             _shuttleValidator = shuttleValidator;
         }
 
-        public async Task<Shuttle> GetShuttle(Guid id)
+        public async Task<List<Shuttle>> GetAllShuttles(string toSearch, List<Guid> guids, int pagination = 50, int skip = 0)
         {
-            try
+            return await _repository.GetAllShuttles(new ShuttleFilter
             {
-                var allShuttles = _repository.GetAllShuttles();
-                if ((await allShuttles).Any(shuttle => shuttle.Id == id))
-                    return (await allShuttles).First((shuttle => shuttle.Id == id));
-                else
-                    throw new CrewApiException("Shuttle does not exist in the repository !",
-                        ExceptionTypeEnum.RepositoryException);
-            }
-            catch (CrewApiException exception)
-            {
-                _logger.LogError(exception.InnerException, exception.TypeEnum + " : " + exception.Message);
-                return null;
-            }
-            catch (Exception exception) when (exception.GetType() != typeof(CrewApiException))
-            {
-                _logger.LogCritical(exception, "Unhandled unexpected exception while creating a shuttle");
-                return null;
-            }
-        }
-
-        public async Task<List<Shuttle>> GetAllShuttles()
-        {
-            return await _repository.GetAllShuttles();
+                ToSearch = toSearch,
+                Guids = guids
+            },pagination,skip);
         }
 
         public async Task<bool> CreateShuttle(Shuttle inputShuttle)
         {
-            try
+            _shuttleValidator.Validate(inputShuttle);
+            var nameAlikeShuttles = await _repository.GetAllShuttles(new ShuttleFilter
             {
-                _shuttleValidator.Validate(inputShuttle);
-                var allShuttles = _repository.GetAllShuttles();
-                if ((await allShuttles).Any(shuttle =>
-                    shuttle.Id == inputShuttle.Id || shuttle.Name == inputShuttle.Name))
-                    throw new CrewApiException("Shuttle already exists in the repository or name is not unique !",
-                        ExceptionTypeEnum.RepositoryException);
-                else
-                    return await _repository.CreateShuttle(inputShuttle);
-            }
-            catch (CrewApiException exception)
+                ToSearch = inputShuttle.Name,
+            },MaxPagination);
+            var idAlikeShuttles = await _repository.GetAllShuttles(new ShuttleFilter
             {
-                _logger.LogError(exception.InnerException, exception.TypeEnum + " : " + exception.Message);
-                return false;
-            }
-            catch (Exception exception) when (exception.GetType() != typeof(CrewApiException))
-            {
-                _logger.LogCritical(exception, "Unhandled unexpected exception while creating a shuttle");
-                return false;
-            }
+                Guids = new List<Guid>() {inputShuttle.Id}
+            },MaxPagination);
+            if (idAlikeShuttles.Any())
+                throw new CrewApiException
+                {
+                    Message = "Shuttle already exists in the repository !",
+                    Severity = ExceptionSeverity.Error,
+                    Type = ExceptionType.ServiceException
+                };
+            if (nameAlikeShuttles.Any())
+                throw new CrewApiException
+                {
+                    Message = "Shuttle name is not unique !",
+                    Severity = ExceptionSeverity.Error,
+                    Type = ExceptionType.ServiceException
+                };
+
+            return await _repository.CreateShuttle(inputShuttle);
         }
 
-        public async Task<bool> DeleteShuttle(Guid id)
+        public async Task<bool> DeleteShuttle(string toSearch, List<Guid> guids)
         {
-            try
+            var shuttlesToDelete = await _repository.GetAllShuttles(new ShuttleFilter
             {
-                var response = (await _repository.GetAllShuttles()).FirstOrDefault(t => t.Id == id);
-                if (response == null || response.Id == Guid.Empty)
-                    throw new CrewApiException("Shuttle is not in the repository.",
-                        ExceptionTypeEnum.RepositoryException);
-                return await _repository.DeleteShuttle(id);
-            }
-            catch (CrewApiException exception)
-            {
-                _logger.LogError(exception.InnerException, exception.TypeEnum + " : " + exception.Message);
-                return false;
-            }
-            catch (Exception exception) when (exception.GetType() != typeof(CrewApiException))
-            {
-                _logger.LogCritical(exception, "Unhandled unexpected exception while deleting a shuttle.");
-                return false;
-            }
+                ToSearch = toSearch,
+                Guids = guids
+            },MaxPagination);
+            if (!shuttlesToDelete.Any())
+                throw new CrewApiException
+                {
+                    Message = "Shuttle is not in the repository.",
+                    Severity = ExceptionSeverity.Error,
+                    Type = ExceptionType.ServiceException
+                };
+            var result = true;
+            foreach(var shuttle in shuttlesToDelete)
+                result = result && await _repository.DeleteShuttle(shuttle.Id);
+            return result;
         }
 
         public async Task<Shuttle> UpdateShuttle(Shuttle inputShuttle)
         {
-            try
+            _shuttleValidator.Validate(inputShuttle);
+            var sameNameShuttles = await _repository.GetAllShuttles(new ShuttleFilter
             {
-                _shuttleValidator.Validate(inputShuttle);
-                var allShuttles = _repository.GetAllShuttles();
-                if ((await allShuttles).Any(shuttle =>
-                    shuttle.Name == inputShuttle.Name && shuttle.Id != inputShuttle.Id))
-                    throw new CrewApiException("Cannot update shuttle name to one that already exists.",
-                        ExceptionTypeEnum.RepositoryException);
-                if ((await allShuttles).Any(shuttle => shuttle.Id == inputShuttle.Id))
-                    return await _repository.UpdateShuttle(inputShuttle);
-                else
-                    throw new CrewApiException("Cannot update non-existent shuttle.",
-                        ExceptionTypeEnum.RepositoryException);
-            }
-            catch (CrewApiException exception)
+                ToSearch = inputShuttle.Name,
+                PerfectMatch = true
+            },MaxPagination);
+            if (sameNameShuttles.Any(shuttle => shuttle.Id != inputShuttle.Id))
+                throw new CrewApiException
+                {
+                    Message = "Cannot update shuttle name to one that already exists.",
+                    Severity = ExceptionSeverity.Error,
+                    Type = ExceptionType.ServiceException
+                };
+            
+            var sameIdShuttles = await _repository.GetAllShuttles(new ShuttleFilter
             {
-                _logger.LogError(exception.InnerException, exception.TypeEnum + " : " + exception.Message);
-                return new Shuttle();
-            }
-            catch (Exception exception) when (exception.GetType() != typeof(CrewApiException))
-            {
-                _logger.LogCritical(exception, "Unhandled unexpected exception while updating a shuttle");
-                return new Shuttle();
-            }
-        }
+                Guids = new List<Guid>(){inputShuttle.Id}
+            },MaxPagination);
+            if (sameIdShuttles.Count == 1)
+                return await _repository.UpdateShuttle(inputShuttle);
 
-        // TODO : Create/Update/Delete a list of shuttles all at once
+            throw new CrewApiException
+            {
+                Message = "Cannot update non-existent shuttle.",
+                Severity = ExceptionSeverity.Error,
+                Type = ExceptionType.ServiceException
+            };
+        }
     }
 }

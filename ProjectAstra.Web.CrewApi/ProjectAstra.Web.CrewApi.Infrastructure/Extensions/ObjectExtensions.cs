@@ -1,9 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using TypeBaseExtensions = Microsoft.EntityFrameworkCore.Metadata.Internal.TypeBaseExtensions;
+﻿using System.Reflection;
 
 namespace ProjectAstra.Web.CrewApi.Infrastructure.Extensions
 {
@@ -25,11 +20,6 @@ namespace ProjectAstra.Web.CrewApi.Infrastructure.Extensions
             }
 
             return returnValue;
-        }
-
-        public static void ModelBuilderUniqueIndexReflection(this ModelBuilder inputBuilder)
-        {
-            inputBuilder.Model.GetEntityTypes().Where(t => t.ClrType != null).ToList().ForEach(entityType => inputBuilder.Entity(entityType.ClrType).HasIndex("Name").IsUnique());
         }
     }
 }

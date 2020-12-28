@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using ProjectAstra.Web.CrewApi.Core.Exceptions;
 using ProjectAstra.Web.CrewApi.Core.Interfaces;
 using ProjectAstra.Web.CrewApi.Core.Models;
 
@@ -9,45 +13,102 @@ namespace ProjectAstra.Web.CrewApi.Presentation.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [SuppressMessage("ReSharper", "ForeachCanBeConvertedToQueryUsingAnotherGetEnumerator")]
     public class ShuttlesController
     {
         private readonly IShuttleService _service;
+        private readonly ILogger<ShuttlesController> _logger;
 
-        public ShuttlesController(IShuttleService service)
+        public ShuttlesController(IShuttleService service, ILogger<ShuttlesController> logger)
         {
             _service = service;
+            _logger = logger;
         }
 
         [HttpGet]
-        public async Task<List<Shuttle>> GetShuttle([FromQuery] string guidData)
+        public async Task<List<Shuttle>> GetShuttle([FromQuery] string toSearch, [FromQuery] Guid[] guids,
+            [FromQuery] int pagination = 50, [FromQuery] int skip = 0)
         {
-            if (Guid.TryParse(guidData, out var guid))
-                return new List<Shuttle> {await _service.GetShuttle(guid)};
-            else
-                return await _service.GetAllShuttles();
+            try
+            {
+                return await _service.GetAllShuttles(toSearch, guids.ToList(),pagination,skip);
+            }
+            catch (CrewApiException exception)
+            {
+                exception.LogException(_logger);
+                return null;
+            }
+            catch (Exception exception) when (exception.GetType() != typeof(CrewApiException))
+            {
+                _logger.LogCritical(exception, "Unhandled unexpected exception while retrieving shuttles");
+                return null;
+            }
         }
 
         [HttpPost]
         [Route("/[controller]/add")]
-        public async Task<bool> AddShuttle([FromBody] Shuttle inputShuttle)
+        public async Task<bool> AddShuttle([FromBody] List<Shuttle> shuttleList)
         {
-            return await _service.CreateShuttle(inputShuttle);
+            var result = true;
+            foreach (var shuttle in shuttleList)
+                try
+                {
+                    await _service.CreateShuttle(shuttle);
+                }
+                catch (CrewApiException exception)
+                {
+                    exception.LogException(_logger);
+                    result = false;
+                }
+                catch (Exception exception) when (exception.GetType() != typeof(CrewApiException))
+                {
+                    _logger.LogCritical(exception, "Unhandled unexpected exception while creating a shuttle");
+                    result = false;
+                }
+
+            return result;
         }
 
         [HttpDelete]
         [Route("/[controller]/delete")]
-        public async Task<bool> DeleteShuttle([FromQuery] string guidData)
+        public async Task<bool> DeleteShuttle([FromQuery] string toSearch, [FromQuery] Guid[] guids)
         {
-            if (Guid.TryParse(guidData, out var guid))
-                return await _service.DeleteShuttle(guid);
+            try
+            {
+                return await _service.DeleteShuttle(toSearch, guids.ToList());
+            }
+            catch (CrewApiException exception)
+            {
+                exception.LogException(_logger);
+            }
+            catch (Exception exception) when (exception.GetType() != typeof(CrewApiException))
+            {
+                _logger.LogCritical(exception, "Unhandled unexpected exception while deleting a shuttle.");
+            }
+
             return false;
         }
 
         [HttpPut]
         [Route("/[controller]/update")]
-        public async Task<Shuttle> UpdateShuttle([FromBody] Shuttle inputShuttle)
+        public async Task<List<Shuttle>> UpdateShuttle([FromBody] List<Shuttle> shuttleList)
         {
-            return await _service.UpdateShuttle(inputShuttle);
+            var result = new List<Shuttle>();
+            foreach (var shuttle in shuttleList)
+                try
+                {
+                    result.Add(await _service.UpdateShuttle(shuttle));
+                }
+                catch (CrewApiException exception)
+                {
+                    exception.LogException(_logger);
+                }
+                catch (Exception exception) when (exception.GetType() != typeof(CrewApiException))
+                {
+                    _logger.LogCritical(exception, "Unhandled unexpected exception while updating a shuttle");
+                }
+
+            return result;
         }
     }
 }

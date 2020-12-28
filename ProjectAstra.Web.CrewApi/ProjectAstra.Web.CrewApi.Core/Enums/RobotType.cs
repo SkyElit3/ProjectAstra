@@ -1,6 +1,6 @@
 ﻿namespace ProjectAstra.Web.CrewApi.Core.Enums
 {
-    public enum RobotTypeEnum
+    public enum RobotType : byte
     {
         Medical,
         Research,

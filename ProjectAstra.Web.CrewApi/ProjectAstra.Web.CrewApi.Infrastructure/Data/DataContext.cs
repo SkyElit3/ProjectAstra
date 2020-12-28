@@ -13,22 +13,45 @@ namespace ProjectAstra.Web.CrewApi.Infrastructure.Data
 
         public DbSet<Explorer> Explorers { get; set; }
 
+        public DbSet<HumanCaptain> HumanCaptains { get; set; }
+
+        public DbSet<Robot> Robots { get; set; }
+
         public DataContext(DbContextOptions options) : base(options)
         {
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            SetModelRelations(modelBuilder);
             SetIndexes(modelBuilder);
-            modelBuilder.Entity<Explorer>()
-                .HasDiscriminator<ExplorerTypeEnum>("ExplorerType")
-                .HasValue<HumanCaptain>(ExplorerTypeEnum.HumanCaptain)
-                .HasValue<Robot>(ExplorerTypeEnum.Robot);
+            SetDiscriminators(modelBuilder);
         }
 
-        private void SetIndexes(ModelBuilder modelBuilder)
+        private static void SetModelRelations(ModelBuilder modelBuilder)
         {
-            modelBuilder.ModelBuilderUniqueIndexReflection();
+            modelBuilder.Entity<TeamOfExplorers>()
+                .HasOne(s => s.Shuttle)
+                .WithOne(t => t.TeamOfExplorers)
+                .HasForeignKey<TeamOfExplorers>(t => t.ShuttleId);
+            
+            modelBuilder.Entity<Explorer>()
+                .HasOne(t => t.TeamOfExplorers)
+                .WithMany(t => t.Explorers)
+                .HasForeignKey(t => t.TeamOfExplorersId);
+        }
+
+        private static void SetIndexes(ModelBuilder modelBuilder)
+        {
+            modelBuilder.SetIndexForEntities(nameof(IEntity.Name));
+        }
+
+        private static void SetDiscriminators(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Explorer>()
+                .HasDiscriminator<ExplorerType>(nameof(ExplorerType))
+                .HasValue<HumanCaptain>(ExplorerType.HumanCaptain)
+                .HasValue<Robot>(ExplorerType.Robot);
         }
     }
 }
