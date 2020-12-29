@@ -22,33 +22,24 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
             _shuttleValidator = shuttleValidator;
         }
 
-        public async Task<List<Shuttle>> GetAllShuttles(string toSearch, List<Guid> guids, int pagination = 50, int skip = 0)
+        public async Task<List<Shuttle>> GetAllShuttles(string toSearch, List<Guid> guids, int pagination = 50,
+            int skip = 0)
         {
             return await _repository.GetAllShuttles(new ShuttleFilter
             {
                 ToSearch = toSearch,
                 Guids = guids
-            },pagination,skip);
+            }, pagination, skip);
         }
 
         public async Task<bool> CreateShuttle(Shuttle inputShuttle)
         {
             _shuttleValidator.Validate(inputShuttle);
+
             var nameAlikeShuttles = await _repository.GetAllShuttles(new ShuttleFilter
             {
                 ToSearch = inputShuttle.Name,
-            },MaxPagination);
-            var idAlikeShuttles = await _repository.GetAllShuttles(new ShuttleFilter
-            {
-                Guids = new List<Guid>() {inputShuttle.Id}
-            },MaxPagination);
-            if (idAlikeShuttles.Any())
-                throw new CrewApiException
-                {
-                    Message = "Shuttle already exists in the repository !",
-                    Severity = ExceptionSeverity.Error,
-                    Type = ExceptionType.ServiceException
-                };
+            }, MaxPagination);
             if (nameAlikeShuttles.Any())
                 throw new CrewApiException
                 {
@@ -56,6 +47,19 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ServiceException
                 };
+
+            var idAlikeShuttles = await _repository.GetAllShuttles(new ShuttleFilter
+            {
+                Guids = new List<Guid>() {inputShuttle.Id}
+            }, MaxPagination);
+            if (idAlikeShuttles.Any())
+                throw new CrewApiException
+                {
+                    Message = "Shuttle already exists in the repository !",
+                    Severity = ExceptionSeverity.Error,
+                    Type = ExceptionType.ServiceException
+                };
+
 
             return await _repository.CreateShuttle(inputShuttle);
         }
@@ -65,8 +69,9 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
             var shuttlesToDelete = await _repository.GetAllShuttles(new ShuttleFilter
             {
                 ToSearch = toSearch,
-                Guids = guids
-            },MaxPagination);
+                Guids = guids,
+                PerfectMatch = true
+            }, MaxPagination);
             if (!shuttlesToDelete.Any())
                 throw new CrewApiException
                 {
@@ -75,7 +80,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
                     Type = ExceptionType.ServiceException
                 };
             var result = true;
-            foreach(var shuttle in shuttlesToDelete)
+            foreach (var shuttle in shuttlesToDelete)
                 result = result && await _repository.DeleteShuttle(shuttle.Id);
             return result;
         }
@@ -87,7 +92,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
             {
                 ToSearch = inputShuttle.Name,
                 PerfectMatch = true
-            },MaxPagination);
+            }, MaxPagination);
             if (sameNameShuttles.Any(shuttle => shuttle.Id != inputShuttle.Id))
                 throw new CrewApiException
                 {
@@ -95,11 +100,11 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ServiceException
                 };
-            
+
             var sameIdShuttles = await _repository.GetAllShuttles(new ShuttleFilter
             {
-                Guids = new List<Guid>(){inputShuttle.Id}
-            },MaxPagination);
+                Guids = new List<Guid>() {inputShuttle.Id}
+            }, MaxPagination);
             if (sameIdShuttles.Count == 1)
                 return await _repository.UpdateShuttle(inputShuttle);
 

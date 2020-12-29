@@ -8,12 +8,12 @@ namespace ProjectAstra.Web.CrewApi.Core.Interfaces
 {
     public interface ITeamOfExplorersRepository
     {
-        public Task<List<TeamOfExplorers>> GetAllTeamsOfExplorers(ShuttleFilter filter, int pagination = 50, int skip = 0);
+        public Task<List<TeamOfExplorers>> GetAllTeamsOfExplorers(TeamOfExplorersFilter filter, int pagination = 50, int skip = 0);
 
         public Task<bool> CreateTeamOfExplorers(TeamOfExplorers inputTeam);
 
         public Task<bool> DeleteTeamOfExplorers(Guid id);
 
-        public Task<Shuttle> UpdateTeamOfExplorers(TeamOfExplorers inputTeam);
+        public Task<TeamOfExplorers> UpdateTeamOfExplorers(TeamOfExplorers inputTeam);
     }
 }

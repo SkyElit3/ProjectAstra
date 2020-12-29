@@ -1,4 +1,4 @@
-﻿/*using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,33 +20,39 @@ namespace ProjectAstra.Web.CrewApi.Infrastructure.Repositories
             _dataContext = dataContext;
         }
 
-        public async Task<List<TeamOfExplorers>> GetAllTeamsOfExplorers(TeamOfExplorersFilter filter, int pagination = 50, int skip = 0)
+        public async Task<List<TeamOfExplorers>> GetAllTeamsOfExplorers(TeamOfExplorersFilter filter,
+            int pagination = 50, int skip = 0)
         {
-            return await filter.Filter(_dataContext.TeamOfExplorerss.AsQueryable()).Skip(skip).Take(pagination).ToListAsync();
+            return await filter.Filter(_dataContext.TeamsOfExplorers
+                    .Include(t => t.Shuttle)
+                    .AsQueryable())
+                .Skip(skip)
+                .Take(pagination)
+                .ToListAsync();
         }
 
         public async Task<bool> CreateTeamOfExplorers(TeamOfExplorers inputTeamOfExplorers)
         {
-            await _dataContext.TeamOfExplorerss.AddAsync(inputTeamOfExplorers);
+            await _dataContext.TeamsOfExplorers.AddAsync(inputTeamOfExplorers);
             await _dataContext.SaveChangesAsync();
             return true;
         }
 
         public async Task<bool> DeleteTeamOfExplorers(Guid id)
         {
-            _dataContext.TeamOfExplorerss.Remove(
-                await _dataContext.TeamOfExplorerss.FirstOrDefaultAsync(TeamOfExplorers => TeamOfExplorers.Id.Equals(id)));
+            _dataContext.TeamsOfExplorers.Remove(
+                await _dataContext.TeamsOfExplorers.FirstOrDefaultAsync(t => t.Id.Equals(id)));
             await _dataContext.SaveChangesAsync();
             return true;
         }
 
         public async Task<TeamOfExplorers> UpdateTeamOfExplorers(TeamOfExplorers inputTeamOfExplorers)
         {
-            var TeamOfExplorersToUpdate =
-                (await _dataContext.TeamOfExplorerss.FirstOrDefaultAsync(TeamOfExplorers => TeamOfExplorers.Id.Equals(inputTeamOfExplorers.Id)));
-            TeamOfExplorersToUpdate.UpdateByReflection(inputTeamOfExplorers);
+            var teamOfExplorersToUpdate =
+                (await _dataContext.TeamsOfExplorers.FirstOrDefaultAsync(t => t.Id.Equals(inputTeamOfExplorers.Id)));
+            teamOfExplorersToUpdate.UpdateByReflection(inputTeamOfExplorers);
             await _dataContext.SaveChangesAsync();
-            return TeamOfExplorersToUpdate;
+            return teamOfExplorersToUpdate;
         }
     }
-}*/
+}

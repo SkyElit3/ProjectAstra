@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using ProjectAstra.Web.CrewApi.Core.Enums;
 
 namespace ProjectAstra.Web.CrewApi.Core.Models
 {
@@ -10,7 +11,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Models
         
         [Column(TypeName = "varchar(256)")] public string Name { get; set; }
 
-        [Column(TypeName = "varchar(256)")] public string Status { get; set; }
+        public StatusType Status { get; set; }
 
         public Guid ShuttleId { get; set; }
 

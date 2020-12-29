@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Pomelo.EntityFrameworkCore.MySql.Storage;
 using ProjectAstra.Web.CrewApi.Core.Interfaces;
 using ProjectAstra.Web.CrewApi.Core.Services;
@@ -32,6 +33,7 @@ namespace ProjectAstra.Web.CrewApi.Presentation
             services.AddControllers().ConfigureApiBehaviorOptions(options => { }).AddNewtonsoftJson(t =>
             {
                 t.SerializerSettings.MaxDepth = 128;
+                t.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             });
 
             ResolveDependencies(services);
@@ -58,6 +60,11 @@ namespace ProjectAstra.Web.CrewApi.Presentation
             services.AddScoped<IShuttleService, ShuttleService>();
             services.AddScoped<IShuttleRepository, ShuttleRepository>();
             services.AddSingleton<IShuttleValidator, ShuttleValidator>();
+            
+            services.AddScoped<ITeamOfExplorersService, TeamOfExplorersService>();
+            services.AddScoped<ITeamOfExplorersRepository, TeamOfExplorersRepository>();
+            services.AddSingleton<ITeamOfExplorersValidator, TeamOfExplorersValidator>();
+            
             services.AddDbContext<DataContext>(options =>
             {
                 options.UseMySql(Configuration.GetConnectionString("DefaultConnection"),

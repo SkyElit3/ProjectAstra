@@ -22,7 +22,12 @@ namespace ProjectAstra.Web.CrewApi.Infrastructure.Repositories
 
         public async Task<List<Shuttle>> GetAllShuttles(ShuttleFilter filter, int pagination = 50, int skip = 0)
         {
-            return await filter.Filter(_dataContext.Shuttles.AsQueryable()).Skip(skip).Take(pagination).ToListAsync();
+            return await filter.Filter(_dataContext.Shuttles
+                    .Include(s => s.TeamOfExplorers)
+                    .AsQueryable())
+                .Skip(skip)
+                .Take(pagination)
+                .ToListAsync();
         }
 
         public async Task<bool> CreateShuttle(Shuttle inputShuttle)

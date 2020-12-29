@@ -6,7 +6,7 @@ using ProjectAstra.Web.CrewApi.Core.Models;
 
 namespace ProjectAstra.Web.CrewApi.Core.Filters
 {
-    public class ShuttleFilter
+    public class TeamOfExplorersFilter
     {
         public string ToSearch { get; set; }
 
@@ -15,19 +15,19 @@ namespace ProjectAstra.Web.CrewApi.Core.Filters
         public bool PerfectMatch { get; set; }
 
 
-        public IQueryable<Shuttle> Filter(IQueryable<Shuttle> shuttleQuery)
+        public IQueryable<TeamOfExplorers> Filter(IQueryable<TeamOfExplorers> teamOfExplorersQuery)
         {
             if (!string.IsNullOrEmpty(ToSearch))
             {
                 if (!PerfectMatch)
                     ToSearch = new string("%" + ToSearch + "%");
-                shuttleQuery = shuttleQuery.Where(shuttle =>
-                    EF.Functions.Like(shuttle.Name, ToSearch));
+                teamOfExplorersQuery = teamOfExplorersQuery.Where(t =>
+                    EF.Functions.Like(t.Name, ToSearch));
             }
 
             if (Guids != null && Guids.Count != 0)
-                shuttleQuery = shuttleQuery.Where(shuttle => Guids.Contains(shuttle.Id));
-            return shuttleQuery;
+                teamOfExplorersQuery = teamOfExplorersQuery.Where(t => Guids.Contains(t.Id));
+            return teamOfExplorersQuery;
         }
     }
 }
