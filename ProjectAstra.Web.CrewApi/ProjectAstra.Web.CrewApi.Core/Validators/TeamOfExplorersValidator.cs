@@ -14,8 +14,6 @@ namespace ProjectAstra.Web.CrewApi.Core.Validators
         
         private static bool ValidateStatus(TeamOfExplorers inputTeamOfExplorers)
         {
-            // ??? error occurs in json when object is created in controller if status is not of statustype
-            // should i bother validating it then ?
             return true;
         }
 

@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace ProjectAstra.Web.CrewApi.Infrastructure.Extensions
+namespace ProjectAstra.Web.CrewApi.Core.Extensions
 {
     public static class ObjectExtensions
     {

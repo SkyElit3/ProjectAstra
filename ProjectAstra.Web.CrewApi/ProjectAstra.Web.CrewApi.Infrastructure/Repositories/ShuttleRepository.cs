@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using ProjectAstra.Web.CrewApi.Core.Extensions;
 using ProjectAstra.Web.CrewApi.Core.Filters;
 using ProjectAstra.Web.CrewApi.Core.Interfaces;
 using ProjectAstra.Web.CrewApi.Core.Models;
@@ -23,7 +24,6 @@ namespace ProjectAstra.Web.CrewApi.Infrastructure.Repositories
         public async Task<List<Shuttle>> GetAllShuttles(ShuttleFilter filter, int pagination = 50, int skip = 0)
         {
             return await filter.Filter(_dataContext.Shuttles
-                    .Include(s => s.TeamOfExplorers)
                     .AsQueryable())
                 .Skip(skip)
                 .Take(pagination)
@@ -45,13 +45,11 @@ namespace ProjectAstra.Web.CrewApi.Infrastructure.Repositories
             return true;
         }
 
-        public async Task<Shuttle> UpdateShuttle(Shuttle inputShuttle)
+        public async Task<bool> UpdateShuttle(Shuttle inputShuttle)
         {
-            var shuttleToUpdate =
-                (await _dataContext.Shuttles.FirstOrDefaultAsync(shuttle => shuttle.Id.Equals(inputShuttle.Id)));
-            shuttleToUpdate.UpdateByReflection(inputShuttle);
+            _dataContext.Shuttles.Update(inputShuttle);
             await _dataContext.SaveChangesAsync();
-            return shuttleToUpdate;
+            return true;
         }
     }
 }

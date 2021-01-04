@@ -10,7 +10,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Filters
     {
         public string ToSearch { get; set; }
 
-        public List<Guid> Guids { get; set; }
+        public List<Guid> Ids { get; set; }
 
         public bool PerfectMatch { get; set; }
 
@@ -25,8 +25,8 @@ namespace ProjectAstra.Web.CrewApi.Core.Filters
                     EF.Functions.Like(shuttle.Name, ToSearch));
             }
 
-            if (Guids != null && Guids.Count != 0)
-                shuttleQuery = shuttleQuery.Where(shuttle => Guids.Contains(shuttle.Id));
+            if (Ids != null && Ids.Count != 0)
+                shuttleQuery = shuttleQuery.Where(shuttle => Ids.Contains(shuttle.Id));
             return shuttleQuery;
         }
     }

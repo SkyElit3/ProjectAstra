@@ -65,6 +65,12 @@ namespace ProjectAstra.Web.CrewApi.Presentation
             services.AddScoped<ITeamOfExplorersRepository, TeamOfExplorersRepository>();
             services.AddSingleton<ITeamOfExplorersValidator, TeamOfExplorersValidator>();
             
+            services.AddScoped<IHumanCaptainService, HumanCaptainService>();
+            services.AddScoped<IHumanCaptainRepository, HumanCaptainRepository>();
+            services.AddSingleton<IHumanCaptainValidator, HumanCaptainValidator>();
+            
+            services.AddScoped<IExplorerRepository, ExplorerRepository>();
+            
             services.AddDbContext<DataContext>(options =>
             {
                 options.UseMySql(Configuration.GetConnectionString("DefaultConnection"),

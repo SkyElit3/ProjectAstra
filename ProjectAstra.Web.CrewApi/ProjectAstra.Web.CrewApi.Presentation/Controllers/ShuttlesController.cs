@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using ProjectAstra.Web.CrewApi.Core.Exceptions;
 using ProjectAstra.Web.CrewApi.Core.Interfaces;
 using ProjectAstra.Web.CrewApi.Core.Models;
@@ -62,7 +63,7 @@ namespace ProjectAstra.Web.CrewApi.Presentation.Controllers
                 }
                 catch (Exception exception) when (exception.GetType() != typeof(CrewApiException))
                 {
-                    _logger.LogCritical(exception, "Unhandled unexpected exception while creating a shuttle");
+                    _logger.LogCritical(exception, $"Unhandled unexpected exception while creating a shuttle: {JsonConvert.SerializeObject(shuttle, Formatting.Indented)}");
                     result = false;
                 }
 
@@ -91,21 +92,23 @@ namespace ProjectAstra.Web.CrewApi.Presentation.Controllers
 
         [HttpPut]
         [Route("/[controller]/update")]
-        public async Task<List<Shuttle>> UpdateShuttle([FromBody] List<Shuttle> shuttleList)
+        public async Task<bool> UpdateShuttle([FromBody] List<Shuttle> shuttleList)
         {
-            var result = new List<Shuttle>();
+            var result = true;
             foreach (var shuttle in shuttleList)
                 try
                 {
-                    result.Add(await _service.UpdateShuttle(shuttle));
+                    await _service.UpdateShuttle(shuttle);
                 }
                 catch (CrewApiException exception)
                 {
                     exception.LogException(_logger);
+                    result = false;
                 }
                 catch (Exception exception) when (exception.GetType() != typeof(CrewApiException))
                 {
-                    _logger.LogCritical(exception, "Unhandled unexpected exception while updating a shuttle");
+                    _logger.LogCritical(exception, $"Unhandled unexpected exception while updating a shuttle: {JsonConvert.SerializeObject(shuttle, Formatting.Indented)}");
+                    result = false;
                 }
 
             return result;

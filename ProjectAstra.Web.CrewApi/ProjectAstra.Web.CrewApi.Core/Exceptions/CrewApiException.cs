@@ -18,7 +18,6 @@ namespace ProjectAstra.Web.CrewApi.Core.Exceptions
         {
             switch (Severity)
             {
-                //if root Exception is null don t put it as a parameter ~ how ??? 
                 case ExceptionSeverity.Warning:
                     if (RootException == null)
                     {

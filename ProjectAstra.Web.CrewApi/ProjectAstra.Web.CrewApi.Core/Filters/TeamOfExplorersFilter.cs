@@ -10,7 +10,9 @@ namespace ProjectAstra.Web.CrewApi.Core.Filters
     {
         public string ToSearch { get; set; }
 
-        public List<Guid> Guids { get; set; }
+        public List<Guid> Ids { get; set; }
+        
+        public Guid ShuttleGuid { get; set; }
 
         public bool PerfectMatch { get; set; }
 
@@ -24,9 +26,11 @@ namespace ProjectAstra.Web.CrewApi.Core.Filters
                 teamOfExplorersQuery = teamOfExplorersQuery.Where(t =>
                     EF.Functions.Like(t.Name, ToSearch));
             }
-
-            if (Guids != null && Guids.Count != 0)
-                teamOfExplorersQuery = teamOfExplorersQuery.Where(t => Guids.Contains(t.Id));
+            if (Ids != null && Ids.Count != 0)
+                teamOfExplorersQuery = teamOfExplorersQuery.Where(t => Ids.Contains(t.Id));
+            if (ShuttleGuid != Guid.Empty)
+                teamOfExplorersQuery = teamOfExplorersQuery.Where(t => t.ShuttleId.Equals(ShuttleGuid));
+            
             return teamOfExplorersQuery;
         }
     }

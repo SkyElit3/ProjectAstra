@@ -15,24 +15,24 @@ namespace ProjectAstra.Web.CrewApi.Presentation.Controllers
     [ApiController]
     [Route("[controller]")]
     [SuppressMessage("ReSharper", "ForeachCanBeConvertedToQueryUsingAnotherGetEnumerator")]
-    public class TeamsOfExplorersController
+    public class HumanCaptainsController
     {
-        private readonly ITeamOfExplorersService _service;
-        private readonly ILogger<TeamsOfExplorersController> _logger;
+        private readonly IHumanCaptainService _service;
+        private readonly ILogger<HumanCaptainsController> _logger;
 
-        public TeamsOfExplorersController(ITeamOfExplorersService service, ILogger<TeamsOfExplorersController> logger)
+        public HumanCaptainsController(IHumanCaptainService service, ILogger<HumanCaptainsController> logger)
         {
             _service = service;
             _logger = logger;
         }
 
         [HttpGet]
-        public async Task<List<TeamOfExplorers>> GetTeamOfExplorers([FromQuery] string toSearch, [FromQuery] Guid[] guids,
+        public async Task<List<HumanCaptain>> GetHumanCaptain([FromQuery] string toSearch, [FromQuery] Guid[] guids,
             [FromQuery] int pagination = 50, [FromQuery] int skip = 0)
         {
             try
             {
-                return await _service.GetAllTeamsOfExplorers(toSearch, guids.ToList(),pagination,skip);
+                return await _service.GetAllHumanCaptains(toSearch, guids.ToList(),pagination,skip);
             }
             catch (CrewApiException exception)
             {
@@ -41,20 +41,20 @@ namespace ProjectAstra.Web.CrewApi.Presentation.Controllers
             }
             catch (Exception exception) when (exception.GetType() != typeof(CrewApiException))
             {
-                _logger.LogCritical(exception, "Unhandled unexpected exception while retrieving teams of explorers");
+                _logger.LogCritical(exception, "Unhandled unexpected exception while retrieving humanCaptains");
                 return null;
             }
         }
 
         [HttpPost]
         [Route("/[controller]/add")]
-        public async Task<bool> AddTeamOfExplorers([FromBody] List<TeamOfExplorers> teamOfExplorersList)
+        public async Task<bool> AddHumanCaptain([FromBody] List<HumanCaptain> humanCaptainList)
         {
             var result = true;
-            foreach (var team in teamOfExplorersList)
+            foreach (var humanCaptain in humanCaptainList)
                 try
                 {
-                    await _service.CreateTeamOfExplorers(team);
+                    await _service.CreateHumanCaptain(humanCaptain);
                 }
                 catch (CrewApiException exception)
                 {
@@ -63,7 +63,7 @@ namespace ProjectAstra.Web.CrewApi.Presentation.Controllers
                 }
                 catch (Exception exception) when (exception.GetType() != typeof(CrewApiException))
                 {
-                    _logger.LogCritical(exception, $"Unhandled unexpected exception while creating a team of explorers: {JsonConvert.SerializeObject(team, Formatting.Indented)}");
+                    _logger.LogCritical(exception, $"Unhandled unexpected exception while creating a human captain: {JsonConvert.SerializeObject(humanCaptain, Formatting.Indented)}");
                     result = false;
                 }
 
@@ -72,11 +72,11 @@ namespace ProjectAstra.Web.CrewApi.Presentation.Controllers
 
         [HttpDelete]
         [Route("/[controller]/delete")]
-        public async Task<bool> DeleteTeamOfExplorers([FromQuery] string toSearch, [FromQuery] Guid[] guids)
+        public async Task<bool> DeleteHumanCaptain([FromQuery] string toSearch, [FromQuery] Guid[] guids)
         {
             try
             {
-                return await _service.DeleteTeamOfExplorers(toSearch, guids.ToList());
+                return await _service.DeleteHumanCaptain(toSearch, guids.ToList());
             }
             catch (CrewApiException exception)
             {
@@ -84,7 +84,7 @@ namespace ProjectAstra.Web.CrewApi.Presentation.Controllers
             }
             catch (Exception exception) when (exception.GetType() != typeof(CrewApiException))
             {
-                _logger.LogCritical(exception, "Unhandled unexpected exception while deleting a team of explorers.");
+                _logger.LogCritical(exception, "Unhandled unexpected exception while deleting a humanCaptain.");
             }
 
             return false;
@@ -92,13 +92,13 @@ namespace ProjectAstra.Web.CrewApi.Presentation.Controllers
 
         [HttpPut]
         [Route("/[controller]/update")]
-        public async Task<bool> UpdateTeamOfExplorers([FromBody] List<TeamOfExplorers> teamOfExplorersList)
+        public async Task<bool> UpdateHumanCaptain([FromBody] List<HumanCaptain> humanCaptainList)
         {
             var result = true;
-            foreach (var team in teamOfExplorersList)
+            foreach (var humanCaptain in humanCaptainList)
                 try
                 {
-                    await _service.UpdateTeamOfExplorers(team);
+                    await _service.UpdateHumanCaptain(humanCaptain);
                 }
                 catch (CrewApiException exception)
                 {
@@ -107,7 +107,7 @@ namespace ProjectAstra.Web.CrewApi.Presentation.Controllers
                 }
                 catch (Exception exception) when (exception.GetType() != typeof(CrewApiException))
                 {
-                    _logger.LogCritical(exception, $"Unhandled unexpected exception while updating a team of explorers: {JsonConvert.SerializeObject(team, Formatting.Indented)}");
+                    _logger.LogCritical(exception, $"Unhandled unexpected exception while updating a human captain: {JsonConvert.SerializeObject(humanCaptain, Formatting.Indented)}");
                     result = false;
                 }
 

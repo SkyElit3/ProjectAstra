@@ -14,6 +14,6 @@ namespace ProjectAstra.Web.CrewApi.Core.Interfaces
 
         public Task<bool> DeleteShuttle(Guid id);
 
-        public Task<Shuttle> UpdateShuttle(Shuttle inputShuttle);
+        public Task<bool> UpdateShuttle(Shuttle inputShuttle);
     }
 }

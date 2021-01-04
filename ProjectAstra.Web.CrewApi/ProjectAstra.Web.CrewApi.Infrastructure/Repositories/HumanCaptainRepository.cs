@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using ProjectAstra.Web.CrewApi.Core.Extensions;
 using ProjectAstra.Web.CrewApi.Core.Filters;
 using ProjectAstra.Web.CrewApi.Core.Interfaces;
 using ProjectAstra.Web.CrewApi.Core.Models;
@@ -11,43 +12,43 @@ using ProjectAstra.Web.CrewApi.Infrastructure.Extensions;
 
 namespace ProjectAstra.Web.CrewApi.Infrastructure.Repositories
 {
-    public class TeamOfExplorersRepository : ITeamOfExplorersRepository
+    public class HumanCaptainRepository : IHumanCaptainRepository
     {
         private readonly DataContext _dataContext;
 
-        public TeamOfExplorersRepository(DataContext dataContext)
+        public HumanCaptainRepository(DataContext dataContext)
         {
             _dataContext = dataContext;
         }
 
-        public async Task<List<TeamOfExplorers>> GetAllTeamsOfExplorers(TeamOfExplorersFilter filter,
-            int pagination = 50, int skip = 0)
+        public async Task<List<HumanCaptain>> GetAllHumanCaptains(HumanCaptainFilter filter, int pagination = 50,
+            int skip = 0)
         {
-            return await filter.Filter(_dataContext.TeamsOfExplorers
+            return await filter.Filter(_dataContext.HumanCaptains
                     .AsQueryable())
                 .Skip(skip)
                 .Take(pagination)
                 .ToListAsync();
         }
 
-        public async Task<bool> CreateTeamOfExplorers(TeamOfExplorers inputTeamOfExplorers)
+        public async Task<bool> CreateHumanCaptain(HumanCaptain inputHumanCaptain)
         {
-            await _dataContext.TeamsOfExplorers.AddAsync(inputTeamOfExplorers);
+            await _dataContext.HumanCaptains.AddAsync(inputHumanCaptain);
             await _dataContext.SaveChangesAsync();
             return true;
         }
 
-        public async Task<bool> DeleteTeamOfExplorers(Guid id)
+        public async Task<bool> DeleteHumanCaptain(Guid id)
         {
-            _dataContext.TeamsOfExplorers.Remove(
-                await _dataContext.TeamsOfExplorers.FirstOrDefaultAsync(t => t.Id.Equals(id)));
+            _dataContext.HumanCaptains.Remove(
+                await _dataContext.HumanCaptains.FirstOrDefaultAsync(humanCaptain => humanCaptain.Id.Equals(id)));
             await _dataContext.SaveChangesAsync();
             return true;
         }
 
-        public async Task<bool> UpdateTeamOfExplorers(TeamOfExplorers inputTeamOfExplorers)
+        public async Task<bool> UpdateHumanCaptain(HumanCaptain inputHumanCaptain)
         {
-            _dataContext.TeamsOfExplorers.Update(inputTeamOfExplorers);
+            _dataContext.HumanCaptains.Update(inputHumanCaptain);
             await _dataContext.SaveChangesAsync();
             return true;
         }

@@ -14,6 +14,6 @@ namespace ProjectAstra.Web.CrewApi.Core.Interfaces
 
         public Task<bool> DeleteTeamOfExplorers(string toSearch, List<Guid> guids);
 
-        public Task<TeamOfExplorers> UpdateTeamOfExplorers(TeamOfExplorers inputTeamOfExplorers);
+        public Task<bool> UpdateTeamOfExplorers(TeamOfExplorers inputTeamOfExplorers);
     }
 }
