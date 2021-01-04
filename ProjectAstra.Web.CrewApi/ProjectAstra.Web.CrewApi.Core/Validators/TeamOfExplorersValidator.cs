@@ -9,12 +9,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Validators
     {
         public bool Validate(IEntity entity)
         {
-            return ValidateName((TeamOfExplorers) entity) && ValidateStatus((TeamOfExplorers) entity);
-        }
-        
-        private static bool ValidateStatus(TeamOfExplorers inputTeamOfExplorers)
-        {
-            return true;
+            return ValidateName((TeamOfExplorers) entity);
         }
 
         private static bool ValidateName(TeamOfExplorers inputTeamOfExplorers)
@@ -22,7 +17,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Validators
             if (inputTeamOfExplorers.Name.Length <= 1)
                 throw new CrewApiException
                 {
-                    Message = "TeamOfExplorers's Name cannot be 1 character or less.",
+                    ExceptionMessage = "TeamOfExplorers's Name cannot be 1 character or less.",
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ValidationException
                 };

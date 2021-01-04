@@ -41,7 +41,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
             if (sameIdShuttles.Any())
                 throw new CrewApiException
                 {
-                    Message = $"Shuttle with id {inputShuttle.Id} exists in the repository !",
+                    ExceptionMessage = $"Shuttle with id {inputShuttle.Id} exists in the repository !",
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ServiceException
                 };
@@ -52,7 +52,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
             if (nameAlikeShuttles.Any())
                 throw new CrewApiException
                 {
-                    Message = $"Shuttle name {inputShuttle.Name} is not unique !",
+                    ExceptionMessage = $"Shuttle name {inputShuttle.Name} is not unique !",
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ServiceException
                 };
@@ -68,7 +68,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
             if (!shuttlesToDelete.Any())
                 throw new CrewApiException
                 {
-                    Message = "Shuttle is not in the repository.",
+                    ExceptionMessage = "Shuttle is not in the repository.",
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ServiceException
                 };
@@ -80,7 +80,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
                 if(sameShuttleIdTeams.Any())
                     throw new CrewApiException
                     {
-                        Message = $"Teams still contain the shuttle id {shuttle.Id}. Delete them before removing the shuttle.",
+                        ExceptionMessage = $"Teams still contain the shuttle id {shuttle.Id}. Delete them before removing the shuttle.",
                         Severity = ExceptionSeverity.Error,
                         Type = ExceptionType.ServiceException
                     };
@@ -100,7 +100,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
             if (sameIdShuttles.Count != 1)
                 throw new CrewApiException
                 {
-                    Message = $"Shuttle with id {inputShuttle.Id} to update has not been found.",
+                    ExceptionMessage = $"Shuttle with id {inputShuttle.Id} to update has not been found.",
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ServiceException
                 };
@@ -113,7 +113,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
                 if (sameNameShuttles.Any(s => s.Id != inputShuttle.Id))
                     throw new CrewApiException
                     {
-                        Message = $"Cannot update shuttle name to one that already exists : {inputShuttle.Name}.",
+                        ExceptionMessage = $"Cannot update shuttle name to one that already exists : {inputShuttle.Name}.",
                         Severity = ExceptionSeverity.Error,
                         Type = ExceptionType.ServiceException
                     };

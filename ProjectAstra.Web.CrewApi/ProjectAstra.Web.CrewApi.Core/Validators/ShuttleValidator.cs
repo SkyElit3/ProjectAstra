@@ -17,7 +17,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Validators
             if (inputShuttle.MaxCrewCapacity <= 0)
                 throw new CrewApiException
                 {
-                    Message = "Shuttle maxCrewCapacity cannot be 0 or less.",
+                    ExceptionMessage = "Shuttle maxCrewCapacity cannot be 0 or less.",
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ValidationException
                 };
@@ -25,7 +25,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Validators
             if (inputShuttle.TeamOfExplorers.Explorers.Count > inputShuttle.MaxCrewCapacity)
                 throw new CrewApiException
                 {
-                    Message = "Shuttle's Team of Explorers crew size exceeds the Shuttle maxCrewCapacity.",
+                    ExceptionMessage = "Shuttle's Team of Explorers crew size exceeds the Shuttle maxCrewCapacity.",
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ValidationException
                 };
@@ -37,7 +37,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Validators
             if (inputShuttle.Name.Length <= 1)
                 throw new CrewApiException
                 {
-                    Message = "Shuttle's Name cannot be 1 character or less.",
+                    ExceptionMessage = "Shuttle's Name cannot be 1 character or less.",
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ValidationException
                 };

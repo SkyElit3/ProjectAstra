@@ -8,7 +8,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Exceptions
     {
         public ExceptionType Type { get; set; }
 
-        public string Message { get; set; }
+        public string ExceptionMessage { get; set; }
 
         private Exception RootException { get; set; }
 
@@ -21,35 +21,35 @@ namespace ProjectAstra.Web.CrewApi.Core.Exceptions
                 case ExceptionSeverity.Warning:
                     if (RootException == null)
                     {
-                        logger.LogWarning($"{Type} : {Message}");
+                        logger.LogWarning($"{Type} : {ExceptionMessage}");
                         break;
                     }
 
-                    logger.LogWarning(RootException, $"{Type} : {Message}");
+                    logger.LogWarning(RootException, $"{Type} : {ExceptionMessage}");
                     break;
 
                 case ExceptionSeverity.Error:
                     if (RootException == null)
                     {
-                        logger.LogError($"{Type} : {Message}");
+                        logger.LogError($"{Type} : {ExceptionMessage}");
                         break;
                     }
 
-                    logger.LogError(RootException, $"{Type} : {Message}");
+                    logger.LogError(RootException, $"{Type} : {ExceptionMessage}");
                     break;
 
                 case ExceptionSeverity.Critical:
                     if (RootException == null)
                     {
-                        logger.LogCritical($"{Type} : {Message}");
+                        logger.LogCritical($"{Type} : {ExceptionMessage}");
                         break;
                     }
 
-                    logger.LogCritical(RootException, $"{Type} : {Message}");
+                    logger.LogCritical(RootException, $"{Type} : {ExceptionMessage}");
                     break;
 
                 default:
-                    logger.LogCritical($"{Type} : {Message}");
+                    logger.LogCritical($"{Type} : {ExceptionMessage}");
                     break;
             }
         }

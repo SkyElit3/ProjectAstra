@@ -51,7 +51,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
             if (!humanCaptainsToDelete.Any())
                 throw new CrewApiException
                 {
-                    Message = "HumanCaptain is not in the repository.",
+                    ExceptionMessage = "HumanCaptain is not in the repository.",
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ServiceException
                 };
@@ -72,7 +72,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
             if (!sameIdHumanCaptains.Any())
                 throw new CrewApiException
                 {
-                    Message = "Cannot update non-existent humanCaptain.",
+                    ExceptionMessage = "Cannot update non-existent humanCaptain.",
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ServiceException
                 };
@@ -85,7 +85,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
                 if (sameNameHumanCaptains.Any(h => h.Id != inputHumanCaptain.Id))
                     throw new CrewApiException
                     {
-                        Message = $"Cannot update Human Captain name {inputHumanCaptain.Name} to one that already exists.",
+                        ExceptionMessage = $"Cannot update Human Captain name {inputHumanCaptain.Name} to one that already exists.",
                         Severity = ExceptionSeverity.Error,
                         Type = ExceptionType.ServiceException
                     };
@@ -98,7 +98,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
                 if(sameIdTeamOfExplorers.Any())
                     throw new CrewApiException
                     {
-                        Message = $"Team with id {inputHumanCaptain.TeamOfExplorersId} does not exist.",
+                        ExceptionMessage = $"Team with id {inputHumanCaptain.TeamOfExplorersId} does not exist.",
                         Severity = ExceptionSeverity.Error,
                         Type = ExceptionType.ServiceException
                     };
@@ -107,7 +107,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
                 if(sameTeamIdHumanCaptains.Any())
                     throw new CrewApiException
                     {
-                        Message = $"Team with id {inputHumanCaptain.TeamOfExplorersId} has another captain.",
+                        ExceptionMessage = $"Team with id {inputHumanCaptain.TeamOfExplorersId} has another captain.",
                         Severity = ExceptionSeverity.Error,
                         Type = ExceptionType.ServiceException
                     };
@@ -118,7 +118,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
             return await _repository.UpdateHumanCaptain(inputHumanCaptain);
         }
 
-        private async Task<bool> ValidateHumanCaptainCreation(HumanCaptain inputHumanCaptain)
+        private async Task ValidateHumanCaptainCreation(HumanCaptain inputHumanCaptain)
         {
             var sameIdHumanCaptains = await _repository.GetAllHumanCaptains(
                 new HumanCaptainFilter {Ids = new List<Guid>() {inputHumanCaptain.Id}});
@@ -126,7 +126,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
             if (sameIdHumanCaptains.Any())
                 throw new CrewApiException
                 {
-                    Message = $"HumanCaptain with same id {inputHumanCaptain.Id} already exists in the repository !",
+                    ExceptionMessage = $"HumanCaptain with same id {inputHumanCaptain.Id} already exists in the repository !",
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ServiceException
                 };
@@ -137,7 +137,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
             if (sameIdTeamsOfExplorers.Count != 1)
                 throw new CrewApiException
                 {
-                    Message = $"Human Captain's TeamOfExplorers id {inputHumanCaptain.TeamOfExplorersId} does not correspond to any team !",
+                    ExceptionMessage = $"Human Captain's TeamOfExplorers id {inputHumanCaptain.TeamOfExplorersId} does not correspond to any team !",
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ServiceException
                 };
@@ -152,7 +152,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
                 if(sameTeamIdExplorers > sameTeamIdShuttles.First().MaxCrewCapacity)
                     throw new CrewApiException
                     {
-                        Message = $"Adding Human captain with id {inputHumanCaptain.TeamOfExplorersId} exceeds shuttle's max crew capacity !",
+                        ExceptionMessage = $"Adding Human captain with id {inputHumanCaptain.TeamOfExplorersId} exceeds shuttle's max crew capacity !",
                         Severity = ExceptionSeverity.Error,
                         Type = ExceptionType.ServiceException
                     };
@@ -163,7 +163,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
             if (sameTeamIdHumanCaptains.Any())
                 throw new CrewApiException
                 {
-                    Message =
+                    ExceptionMessage =
                         $"TeamOfExplorers with id {inputHumanCaptain.TeamOfExplorersId} can have only one human captain !",
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ServiceException
@@ -175,14 +175,10 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
             if (nameAlikeHumanCaptains.Any())
                 throw new CrewApiException
                 {
-                    Message = $"HumanCaptain name {inputHumanCaptain.Name} is not unique !",
+                    ExceptionMessage = $"HumanCaptain name {inputHumanCaptain.Name} is not unique !",
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ServiceException
                 };
-            
-            
-
-            return true;
         }
     }
 }

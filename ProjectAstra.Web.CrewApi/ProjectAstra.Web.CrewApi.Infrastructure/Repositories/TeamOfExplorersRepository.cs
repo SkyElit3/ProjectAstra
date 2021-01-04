@@ -7,7 +7,6 @@ using ProjectAstra.Web.CrewApi.Core.Filters;
 using ProjectAstra.Web.CrewApi.Core.Interfaces;
 using ProjectAstra.Web.CrewApi.Core.Models;
 using ProjectAstra.Web.CrewApi.Infrastructure.Data;
-using ProjectAstra.Web.CrewApi.Infrastructure.Extensions;
 
 namespace ProjectAstra.Web.CrewApi.Infrastructure.Repositories
 {

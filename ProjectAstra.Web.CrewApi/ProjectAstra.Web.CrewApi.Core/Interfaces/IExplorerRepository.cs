@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using ProjectAstra.Web.CrewApi.Core.Filters;
-using ProjectAstra.Web.CrewApi.Core.Models;
 
 namespace ProjectAstra.Web.CrewApi.Core.Interfaces
 {

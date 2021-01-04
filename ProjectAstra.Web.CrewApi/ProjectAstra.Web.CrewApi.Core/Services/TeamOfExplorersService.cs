@@ -44,7 +44,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
             if (sameIdShuttles.Count != 1)
                 throw new CrewApiException
                 {
-                    Message = $"TeamOfExplorers's Shuttle id {inputTeamOfExplorers.ShuttleId} does not correspond to any shuttle !",
+                    ExceptionMessage = $"TeamOfExplorers's Shuttle id {inputTeamOfExplorers.ShuttleId} does not correspond to any shuttle !",
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ServiceException
                 };
@@ -55,7 +55,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
             if (sameNameTeamsOfExplorers.Any())
                 throw new CrewApiException
                 {
-                    Message = $"TeamOfExplorers name {inputTeamOfExplorers.Name} is not unique !",
+                    ExceptionMessage = $"TeamOfExplorers name {inputTeamOfExplorers.Name} is not unique !",
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ServiceException
                 };
@@ -66,7 +66,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
             if (sameIdTeamsOfExplorers.Any())
                 throw new CrewApiException
                 {
-                    Message = $"TeamOfExplorers id {inputTeamOfExplorers.Id} already exists in the repository !",
+                    ExceptionMessage = $"TeamOfExplorers id {inputTeamOfExplorers.Id} already exists in the repository !",
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ServiceException
                 };
@@ -77,7 +77,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
             if (sameShuttleIdTeamsOfExplorers.Any())
                 throw new CrewApiException
                 {
-                    Message = $"TeamOfExplorers's Shuttle id {inputTeamOfExplorers.ShuttleId} has already been assigned to another team !",
+                    ExceptionMessage = $"TeamOfExplorers's Shuttle id {inputTeamOfExplorers.ShuttleId} has already been assigned to another team !",
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ServiceException
                 };
@@ -93,7 +93,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
             if (!teamsToDelete.Any())
                 throw new CrewApiException
                 {
-                    Message = "TeamOfExplorers is not in the repository.",
+                    ExceptionMessage = "TeamOfExplorers is not in the repository.",
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ServiceException
                 };
@@ -105,7 +105,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
                 if(sameTeamIdExplorers != 0)
                     throw new CrewApiException
                     {
-                        Message = $"Explorers still contain the team id {team.Id}. Delete them before removing the explorers team.",
+                        ExceptionMessage = $"Explorers still contain the team id {team.Id}. Delete them before removing the explorers team.",
                         Severity = ExceptionSeverity.Error,
                         Type = ExceptionType.ServiceException
                     };
@@ -125,7 +125,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
             if (!sameIdTeamOfExplorers.Any())
                 throw new CrewApiException
                 {
-                    Message = "Team of explorers to update has not been found.",
+                    ExceptionMessage = "Team of explorers to update has not been found.",
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ServiceException
                 };
@@ -136,7 +136,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
                 if(sameNameTeamOfExplorers.Any())
                     throw new CrewApiException
                     {
-                        Message = $"Cannot update team of explorers name {inputTeamOfExplorers.Name} to one that already exists.",
+                        ExceptionMessage = $"Cannot update team of explorers name {inputTeamOfExplorers.Name} to one that already exists.",
                         Severity = ExceptionSeverity.Error,
                         Type = ExceptionType.ServiceException
                     };
@@ -149,7 +149,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
                 if(!shuttlesWithId.Any())
                     throw new CrewApiException
                     {
-                        Message = $"TeamOfExplorers's Shuttle id {inputTeamOfExplorers.ShuttleId} does not correspond to any shuttle !",
+                        ExceptionMessage = $"TeamOfExplorers's Shuttle id {inputTeamOfExplorers.ShuttleId} does not correspond to any shuttle !",
                         Severity = ExceptionSeverity.Error,
                         Type = ExceptionType.ServiceException
                     };
@@ -159,7 +159,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
                 if(sameShuttleIdTeams.Any())
                     throw new CrewApiException
                     {
-                        Message = $"TeamOfExplorers's Shuttle id {inputTeamOfExplorers.ShuttleId} has already been assigned to another team !",
+                        ExceptionMessage = $"TeamOfExplorers's Shuttle id {inputTeamOfExplorers.ShuttleId} has already been assigned to another team !",
                         Severity = ExceptionSeverity.Error,
                         Type = ExceptionType.ServiceException
                     };

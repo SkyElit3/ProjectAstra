@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using ProjectAstra.Web.CrewApi.Core.Extensions;
 using ProjectAstra.Web.CrewApi.Core.Filters;
 using ProjectAstra.Web.CrewApi.Core.Interfaces;
 using ProjectAstra.Web.CrewApi.Core.Models;
 using ProjectAstra.Web.CrewApi.Infrastructure.Data;
-using ProjectAstra.Web.CrewApi.Infrastructure.Extensions;
 
 namespace ProjectAstra.Web.CrewApi.Infrastructure.Repositories
 {
