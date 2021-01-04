@@ -1,20 +1,37 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
+using Pomelo.EntityFrameworkCore.MySql.Storage;
+using ProjectAstra.Web.PlanetApi.Infrastructure.Data;
 
 namespace ProjectAstra.Web.PlanetApi.Presentation
 {
     public class Startup
     {
+        private IConfiguration Configuration { get; }
+        
+        public Startup(IConfiguration config)
+        {
+            Configuration = config;
+        }
+        
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllers().ConfigureApiBehaviorOptions(options => { }).AddNewtonsoftJson(t =>
+            {
+                t.SerializerSettings.MaxDepth = 128;
+                t.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            });
+
+            ResolveDependencies(services);
         }
+
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -27,6 +44,19 @@ namespace ProjectAstra.Web.PlanetApi.Presentation
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGet("/", async context => { await context.Response.WriteAsync("Hello World!"); });
+            });
+        }
+        private void ResolveDependencies(IServiceCollection services)
+        {
+            services.AddDbContext<DataContext>(options =>
+            {
+                options.UseMySql(Configuration.GetConnectionString("DefaultConnection"),
+                    builderOptions =>
+                    {
+                        builderOptions.MigrationsAssembly("ProjectAstra.Web.PlanetApi.Presentation")
+                            .ServerVersion(new ServerVersion(new Version(5, 7, 12)))
+                            .CharSet(CharSet.Latin1);
+                    });
             });
         }
     }
