@@ -69,6 +69,10 @@ namespace ProjectAstra.Web.CrewApi.Presentation
             services.AddScoped<IHumanCaptainRepository, HumanCaptainRepository>();
             services.AddSingleton<IHumanCaptainValidator, HumanCaptainValidator>();
             
+            services.AddScoped<IRobotService, RobotService>();
+            services.AddScoped<IRobotRepository, RobotRepository>();
+            services.AddSingleton<IRobotValidator, RobotValidator>();
+            
             services.AddScoped<IExplorerRepository, ExplorerRepository>();
             
             services.AddDbContext<DataContext>(options =>

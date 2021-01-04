@@ -18,7 +18,7 @@ namespace ProjectAstra.Web.CrewApi.Infrastructure.Repositories
 
         public async Task<int> GetAllExplorers(ExplorerFilter filter, int pagination = 50, int skip = 0)
         {
-            return await filter.Filter(_dataContext.HumanCaptains
+            return await filter.Filter(_dataContext.Explorers
                     .AsQueryable())
                 .Skip(skip)
                 .Take(pagination)

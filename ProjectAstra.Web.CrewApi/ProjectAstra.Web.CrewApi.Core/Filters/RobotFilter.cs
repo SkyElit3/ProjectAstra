@@ -6,7 +6,7 @@ using ProjectAstra.Web.CrewApi.Core.Models;
 
 namespace ProjectAstra.Web.CrewApi.Core.Filters
 {
-    public class HumanCaptainFilter
+    public class RobotFilter
     {
         public string ToSearch { get; set; }
 
@@ -16,23 +16,23 @@ namespace ProjectAstra.Web.CrewApi.Core.Filters
         
         public Guid TeamId { get; set; }
         
-        public IQueryable<HumanCaptain> Filter(IQueryable<HumanCaptain> humanCaptainQuery)
+        public IQueryable<Robot> Filter(IQueryable<Robot> robotQuery)
         {
             if (!string.IsNullOrEmpty(ToSearch))
             {
                 if (!PerfectMatch)
                     ToSearch = new string("%" + ToSearch + "%");
-                humanCaptainQuery = humanCaptainQuery.Where(humanCaptain =>
-                    EF.Functions.Like(humanCaptain.Name, ToSearch));
+                robotQuery = robotQuery.Where(robot =>
+                    EF.Functions.Like(robot.Name, ToSearch));
             }
 
             if (Ids != null && Ids.Count != 0)
-                humanCaptainQuery = humanCaptainQuery.Where(humanCaptain => Ids.Contains(humanCaptain.Id ));
+                robotQuery = robotQuery.Where(robot => Ids.Contains(robot.Id));
             
             if (TeamId != Guid.Empty)
-                humanCaptainQuery = humanCaptainQuery.Where(t => t.TeamOfExplorersId.Equals(TeamId));
+                robotQuery = robotQuery.Where(t => t.TeamOfExplorersId.Equals(TeamId));
             
-            return humanCaptainQuery;
+            return robotQuery;
         }
     }
 }

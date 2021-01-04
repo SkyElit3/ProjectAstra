@@ -17,7 +17,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Validators
             if (inputTeamOfExplorers.Name.Length <= 1)
                 throw new CrewApiException
                 {
-                    ExceptionMessage = "TeamOfExplorers's Name cannot be 1 character or less.",
+                    ExceptionMessage = $"TeamOfExplorers's Name {inputTeamOfExplorers.Name} cannot be 1 character or less.",
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ValidationException
                 };

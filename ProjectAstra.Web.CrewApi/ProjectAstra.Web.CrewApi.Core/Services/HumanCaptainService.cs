@@ -72,7 +72,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
             if (!sameIdHumanCaptains.Any())
                 throw new CrewApiException
                 {
-                    ExceptionMessage = "Cannot update non-existent humanCaptain.",
+                    ExceptionMessage = $"Cannot update non-existant humanCaptain {inputHumanCaptain.Id}.",
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ServiceException
                 };
@@ -95,7 +95,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
             {
                 var sameIdTeamOfExplorers = await _teamOfExplorersRepository.GetAllTeamsOfExplorers(
                     new TeamOfExplorersFilter {Ids = new List<Guid> {inputHumanCaptain.TeamOfExplorersId}});
-                if(sameIdTeamOfExplorers.Any())
+                if(!sameIdTeamOfExplorers.Any())
                     throw new CrewApiException
                     {
                         ExceptionMessage = $"Team with id {inputHumanCaptain.TeamOfExplorersId} does not exist.",
@@ -115,7 +115,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
 
             var humanCaptain = sameIdHumanCaptains.First();
             humanCaptain.UpdateByReflection(inputHumanCaptain);
-            return await _repository.UpdateHumanCaptain(inputHumanCaptain);
+            return await _repository.UpdateHumanCaptain(humanCaptain);
         }
 
         private async Task ValidateHumanCaptainCreation(HumanCaptain inputHumanCaptain)

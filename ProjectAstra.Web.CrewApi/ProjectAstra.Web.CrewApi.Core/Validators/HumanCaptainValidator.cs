@@ -19,7 +19,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Validators
             if (inputHumanCaptain.Name.Length <= 1)
                 throw new CrewApiException
                 {
-                    ExceptionMessage = "HumanCaptain's Name cannot be 1 character or less.",
+                    ExceptionMessage = $"HumanCaptain's Name {inputHumanCaptain.Name} cannot be 1 character or less.",
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ValidationException
                 };
@@ -31,7 +31,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Validators
             if (inputHumanCaptain.Grade.Length <= 1)
                 throw new CrewApiException
                 {
-                    ExceptionMessage = "HumanCaptain's Grade cannot be 1 character or less.",
+                    ExceptionMessage = $"HumanCaptain's Grade {inputHumanCaptain.Grade} cannot be 1 character or less.",
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ValidationException
                 };
@@ -43,21 +43,21 @@ namespace ProjectAstra.Web.CrewApi.Core.Validators
             if (inputHumanCaptain.Password.Length < 6)
                 throw new CrewApiException
                 {
-                    ExceptionMessage = "HumanCaptain's Password cannot be less than 6 characters.",
+                    ExceptionMessage = $"HumanCaptain's Password {inputHumanCaptain.Password} cannot be less than 6 characters.",
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ValidationException
                 };
             if (!Regex.Match(inputHumanCaptain.Password, @"[a-z]", RegexOptions.ECMAScript).Success)
                 throw new CrewApiException
                 {
-                    ExceptionMessage = "HumanCaptain's Password must contain at least one lowercase character from a-z .",
+                    ExceptionMessage = $"HumanCaptain's Password {inputHumanCaptain.Password} must contain at least one lowercase character from a-z .",
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ValidationException
                 };
             if (!Regex.Match(inputHumanCaptain.Password, @"[A-Z]", RegexOptions.ECMAScript).Success)
                 throw new CrewApiException
                 {
-                    ExceptionMessage = "HumanCaptain's Password must contain at least one uppercase character from a-z .",
+                    ExceptionMessage = $"HumanCaptain's Password {inputHumanCaptain.Password} must contain at least one uppercase character from a-z .",
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ValidationException
                 };
@@ -65,7 +65,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Validators
                 .Success)
                 throw new CrewApiException
                 {
-                    ExceptionMessage = "HumanCaptain's Password must contain at least one symbol .",
+                    ExceptionMessage = $"HumanCaptain's Password {inputHumanCaptain.Password} must contain at least one symbol .",
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ValidationException
                 };
