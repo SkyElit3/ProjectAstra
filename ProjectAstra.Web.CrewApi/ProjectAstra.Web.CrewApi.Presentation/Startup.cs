@@ -36,6 +36,7 @@ namespace ProjectAstra.Web.CrewApi.Presentation
                 t.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             });
 
+            services.AddHttpClient();
             ResolveDependencies(services);
         }
 

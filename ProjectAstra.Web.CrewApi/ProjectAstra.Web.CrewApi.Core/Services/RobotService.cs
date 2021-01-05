@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using ProjectAstra.Web.CrewApi.Core.Enums;
 using ProjectAstra.Web.CrewApi.Core.Exceptions;
@@ -18,15 +19,18 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
         private readonly IExplorerRepository _explorerRepository;
         private readonly IRobotValidator _robotValidator;
         private readonly IShuttleRepository _shuttleRepository;
+        private readonly IHttpClientFactory _clientFactory;
 
         public RobotService(IRobotRepository repository, IRobotValidator robotValidator,
-            ITeamOfExplorersRepository teamOfExplorersRepository, IShuttleRepository shuttleRepository, IExplorerRepository explorerRepository)
+            ITeamOfExplorersRepository teamOfExplorersRepository, IShuttleRepository shuttleRepository,
+            IExplorerRepository explorerRepository, IHttpClientFactory clientFactory)
         {
             _repository = repository;
             _robotValidator = robotValidator;
             _teamOfExplorersRepository = teamOfExplorersRepository;
             _shuttleRepository = shuttleRepository;
             _explorerRepository = explorerRepository;
+            _clientFactory = clientFactory;
         }
 
         public async Task<List<Robot>> GetAllRobots(string toSearch, List<Guid> guids,
@@ -58,7 +62,31 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
 
             var result = true;
             foreach (var robot in robotsToDelete)
+            {
+                var correspondingTeam = await _teamOfExplorersRepository.GetAllTeamsOfExplorers(
+                    new TeamOfExplorersFilter {Ids = new List<Guid> {robot.TeamOfExplorersId}});
+                if (correspondingTeam.Any())
+                {
+                    var correspondingShuttle = await _shuttleRepository.GetAllShuttles(
+                        new ShuttleFilter {Ids = new List<Guid> {correspondingTeam.First().ShuttleId}});
+                    if (correspondingShuttle.Any())
+                    {
+                        var client = _clientFactory.CreateClient();
+                        var planetId = await (await client.GetAsync(
+                                $"http://localhost:5001/exports?shuttleId={correspondingShuttle.First().Id}")).Content
+                            .ReadAsStringAsync();
+
+                        using var httpResponse = await client.PutAsync(
+                            $"http://localhost:5001/exports/update" +
+                            $"?shuttleId={correspondingShuttle.First().Id}&planetId={Guid.Parse(planetId.Substring(1,planetId.Length-2))}&numberOfRobotsDelta={-1}",
+                            null);
+                        httpResponse.EnsureSuccessStatusCode();
+                    }
+                }
+
                 result = result && await _repository.DeleteRobot(robot.Id);
+            }
+
             return result;
         }
 
@@ -95,7 +123,7 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
             {
                 var sameIdTeamOfExplorers = await _teamOfExplorersRepository.GetAllTeamsOfExplorers(
                     new TeamOfExplorersFilter {Ids = new List<Guid> {inputRobot.TeamOfExplorersId}});
-                if(!sameIdTeamOfExplorers.Any())
+                if (!sameIdTeamOfExplorers.Any())
                     throw new CrewApiException
                     {
                         ExceptionMessage = $"Team with id {inputRobot.TeamOfExplorersId} does not exist.",
@@ -128,7 +156,8 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
             if (sameIdTeamsOfExplorers.Count != 1)
                 throw new CrewApiException
                 {
-                    ExceptionMessage = $"Robot's TeamOfExplorers id {inputRobot.TeamOfExplorersId} does not correspond to any team !",
+                    ExceptionMessage =
+                        $"Robot's TeamOfExplorers id {inputRobot.TeamOfExplorersId} does not correspond to any team !",
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ServiceException
                 };
@@ -138,12 +167,13 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
 
             var sameTeamIdShuttles = await _shuttleRepository.GetAllShuttles(
                 new ShuttleFilter {Ids = new List<Guid> {sameIdTeamsOfExplorers.First().ShuttleId}});
-            
-            if(sameTeamIdShuttles.Any())
-                if(sameTeamIdExplorers > sameTeamIdShuttles.First().MaxCrewCapacity)
+
+            if (sameTeamIdShuttles.Any())
+                if (sameTeamIdExplorers > sameTeamIdShuttles.First().MaxCrewCapacity)
                     throw new CrewApiException
                     {
-                        ExceptionMessage = $"Adding Robot with id {inputRobot.TeamOfExplorersId} exceeds shuttle's {sameTeamIdShuttles.First().Id} max crew capacity !",
+                        ExceptionMessage =
+                            $"Adding Robot with id {inputRobot.TeamOfExplorersId} exceeds shuttle's {sameTeamIdShuttles.First().Id} max crew capacity !",
                         Severity = ExceptionSeverity.Error,
                         Type = ExceptionType.ServiceException
                     };
@@ -158,6 +188,27 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ServiceException
                 };
+            
+            var correspondingTeam = await _teamOfExplorersRepository.GetAllTeamsOfExplorers(
+                new TeamOfExplorersFilter {Ids = new List<Guid> {inputRobot.TeamOfExplorersId}});
+            if (correspondingTeam.Any())
+            {
+                var correspondingShuttle = await _shuttleRepository.GetAllShuttles(
+                    new ShuttleFilter {Ids = new List<Guid> {correspondingTeam.First().ShuttleId}});
+                if (correspondingShuttle.Any())
+                {
+                    var client = _clientFactory.CreateClient();
+                    var planetId = Guid.Parse(await (await client.GetAsync(
+                            $"http://localhost:5001/exports?shuttleId={correspondingShuttle.First().Id}")).Content
+                        .ReadAsStringAsync());
+
+                    using var httpResponse = await client.PutAsync(
+                        $"http://localhost:5001/exports/update" +
+                        $"?shuttleId={correspondingShuttle.First().Id}&planetId={planetId}&numberOfRobotsDelta={1}",
+                        null);
+                    httpResponse.EnsureSuccessStatusCode();
+                }
+            }
         }
     }
 }

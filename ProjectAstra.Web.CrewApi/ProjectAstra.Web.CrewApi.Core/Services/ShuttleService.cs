@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using ProjectAstra.Web.CrewApi.Core.Enums;
 using ProjectAstra.Web.CrewApi.Core.Exceptions;
 using ProjectAstra.Web.CrewApi.Core.Extensions;
@@ -16,12 +19,14 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
         private readonly IShuttleRepository _repository;
         private readonly ITeamOfExplorersRepository _teamOfExplorersRepository;
         private readonly IShuttleValidator _shuttleValidator;
+        private readonly IHttpClientFactory _clientFactory;
 
-        public ShuttleService(IShuttleRepository repository, IShuttleValidator shuttleValidator, ITeamOfExplorersRepository teamOfExplorersRepository)
+        public ShuttleService(IShuttleRepository repository, IShuttleValidator shuttleValidator, ITeamOfExplorersRepository teamOfExplorersRepository, IHttpClientFactory clientFactory)
         {
             _repository = repository;
             _shuttleValidator = shuttleValidator;
             _teamOfExplorersRepository = teamOfExplorersRepository;
+            _clientFactory = clientFactory;
         }
 
         public async Task<List<Shuttle>> GetAllShuttles(string toSearch, List<Guid> guids, int pagination = 50,
@@ -84,6 +89,12 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
                         Severity = ExceptionSeverity.Error,
                         Type = ExceptionType.ServiceException
                     };
+                
+                var client = _clientFactory.CreateClient();
+                using var httpResponse =
+                    await client.PutAsync($"http://localhost:5001/exports/update?shuttleId={shuttle.Id}",null);
+                httpResponse.EnsureSuccessStatusCode();
+                
                 await _repository.DeleteShuttle(shuttle.Id);
             }
 
