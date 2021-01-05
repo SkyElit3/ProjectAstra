@@ -70,7 +70,7 @@ namespace ProjectAstra.Web.PlanetApi.Core.Services
             if (!EnumerableExtensions.Any(solarSystemsToDelete))
                 throw new PlanetApiException
                 {
-                    ExceptionMessage = $"Solar System is not in the repository !",
+                    ExceptionMessage = "Solar System is not in the repository !",
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ServiceException
                 };

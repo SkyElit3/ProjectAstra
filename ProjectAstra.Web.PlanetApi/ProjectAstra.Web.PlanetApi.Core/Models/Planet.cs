@@ -20,6 +20,8 @@ namespace ProjectAstra.Web.PlanetApi.Core.Models
         
         public int NumberOfRobots { get; set; }
         
+        public Guid ShuttleId { get; set; }
+        
         public Guid SolarSystemId { get; set; }
         
         public SolarSystem SolarSystem { get; set; }

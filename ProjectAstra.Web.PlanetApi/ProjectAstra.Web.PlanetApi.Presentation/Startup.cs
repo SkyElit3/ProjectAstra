@@ -33,6 +33,7 @@ namespace ProjectAstra.Web.PlanetApi.Presentation
                 t.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             });
 
+            services.AddHttpClient();
             ResolveDependencies(services);
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Internal;
 using ProjectAstra.Web.PlanetApi.Core.Enums;
@@ -17,20 +18,22 @@ namespace ProjectAstra.Web.PlanetApi.Core.Services
         private readonly IPlanetRepository _repository;
         private readonly IPlanetValidator _planetValidator;
         private readonly ISolarSystemRepository _solarSystemRepository;
+        private readonly IHttpClientFactory _clientFactory;
 
         public PlanetService(IPlanetRepository repository, IPlanetValidator planetValidator,
-            ISolarSystemRepository solarSystemRepository)
+            ISolarSystemRepository solarSystemRepository, IHttpClientFactory clientFactory)
         {
             _repository = repository;
             _planetValidator = planetValidator;
             _solarSystemRepository = solarSystemRepository;
+            _clientFactory = clientFactory;
         }
 
-        public async Task<List<Planet>> GetAllPlanets(string toSearch, List<Guid> guids, int pagination = 50,
+        public async Task<List<Planet>> GetAllPlanets(string toSearch, List<Guid> guids,Guid shuttleId = new Guid(), int pagination = 50,
             int skip = 0)
         {
             return await _repository.GetAllPlanets(
-                new PlanetFilter {ToSearch = toSearch, Ids = guids}, pagination, skip);
+                new PlanetFilter {ToSearch = toSearch, Ids = guids,ShuttleId = shuttleId}, pagination, skip);
         }
 
         public async Task<bool> CreatePlanet(Planet inputPlanet)
@@ -70,6 +73,35 @@ namespace ProjectAstra.Web.PlanetApi.Core.Services
                     Type = ExceptionType.ServiceException
                 };
 
+            if (inputPlanet.ShuttleId != Guid.Empty)
+            {
+                var sameShuttleIdPlanets = await _repository.GetAllPlanets(
+                    new PlanetFilter {ShuttleId = inputPlanet.ShuttleId});
+                
+                if (sameShuttleIdPlanets.Any())
+                    throw new PlanetApiException
+                    {
+                        ExceptionMessage =
+                            $"Shuttle with id {inputPlanet.ShuttleId} is already visiting another planet !",
+                        Severity = ExceptionSeverity.Error,
+                        Type = ExceptionType.ServiceException
+                    };
+                
+                var client = _clientFactory.CreateClient();
+                using var httpResponse =
+                    await client.GetAsync($"http://localhost:5000/exports?shuttleId={inputPlanet.ShuttleId}");
+                httpResponse.EnsureSuccessStatusCode();
+                var samePlanetShuttlesCount = int.Parse(await httpResponse.Content.ReadAsStringAsync());
+                if (samePlanetShuttlesCount != 1)
+                    throw new PlanetApiException
+                    {
+                        ExceptionMessage =
+                            $"Planet's shuttle id {inputPlanet.ShuttleId} does not correspond to an existing shuttle.",
+                        Severity = ExceptionSeverity.Error,
+                        Type = ExceptionType.ServiceException
+                    };
+            }
+
             return await _repository.CreatePlanet(inputPlanet);
         }
 
@@ -81,13 +113,12 @@ namespace ProjectAstra.Web.PlanetApi.Core.Services
             if (!EnumerableExtensions.Any(planetsToDelete))
                 throw new PlanetApiException
                 {
-                    ExceptionMessage = $"Planet is not in the repository !",
+                    ExceptionMessage = "Planet is not in the repository !",
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ServiceException
                 };
             foreach (var planet in planetsToDelete)
             {
-                // todo: check if planet is currently visited by a team of explorers
                 await _repository.DeletePlanet(planet.Id);
             }
 
@@ -134,6 +165,23 @@ namespace ProjectAstra.Web.PlanetApi.Core.Services
                     Severity = ExceptionSeverity.Error,
                     Type = ExceptionType.ServiceException
                 };
+
+            var client = _clientFactory.CreateClient();
+            if (inputPlanet.ShuttleId != Guid.Empty)
+            {
+                using var httpResponse =
+                    await client.GetAsync($"http://localhost:5000/exports?shuttleId={inputPlanet.ShuttleId}");
+                httpResponse.EnsureSuccessStatusCode();
+                var samePlanetShuttlesCount = int.Parse(await httpResponse.Content.ReadAsStringAsync());
+                if (samePlanetShuttlesCount != 1)
+                    throw new PlanetApiException
+                    {
+                        ExceptionMessage =
+                            $"Planet's shuttle id {inputPlanet.ShuttleId} does not correspond to an existing shuttle.",
+                        Severity = ExceptionSeverity.Error,
+                        Type = ExceptionType.ServiceException
+                    };
+            }
 
             var planet = sameIdPlanets.First();
             planet.UpdateByReflection(inputPlanet);

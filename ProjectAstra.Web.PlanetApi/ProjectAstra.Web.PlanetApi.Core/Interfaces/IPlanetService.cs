@@ -7,7 +7,7 @@ namespace ProjectAstra.Web.PlanetApi.Core.Interfaces
 {
     public interface IPlanetService
     {
-        public Task<List<Planet>> GetAllPlanets(string toSearch, List<Guid> guids, int pagination = 50, int skip = 0);
+        public Task<List<Planet>> GetAllPlanets(string toSearch, List<Guid> guids,Guid shuttleId = new Guid(), int pagination = 50, int skip = 0);
 
         public Task<bool> CreatePlanet(Planet inputPlanet);
 

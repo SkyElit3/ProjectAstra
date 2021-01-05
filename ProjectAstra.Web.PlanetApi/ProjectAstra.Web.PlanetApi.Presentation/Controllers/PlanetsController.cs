@@ -32,7 +32,7 @@ namespace ProjectAstra.Web.PlanetApi.Presentation.Controllers
         {
             try
             {
-                return await _service.GetAllPlanets(toSearch, guids.ToList(), pagination, skip);
+                return await _service.GetAllPlanets(toSearch, guids.ToList(),new Guid(), pagination, skip);
             }
             catch (PlanetApiException exception)
             {
