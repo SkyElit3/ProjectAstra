@@ -46,10 +46,10 @@ namespace ProjectAstra.Web.CrewApi.Core.Services
                     Type = ExceptionType.ServiceException
                 };
 
-            var nameAlikeShuttles = await _repository.GetAllShuttles(
+            var sameNameShuttles = await _repository.GetAllShuttles(
                 new ShuttleFilter {ToSearch = inputShuttle.Name, PerfectMatch = true});
 
-            if (nameAlikeShuttles.Any())
+            if (sameNameShuttles.Any())
                 throw new CrewApiException
                 {
                     ExceptionMessage = $"Shuttle name {inputShuttle.Name} is not unique !",

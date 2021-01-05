@@ -8,7 +8,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using Pomelo.EntityFrameworkCore.MySql.Storage;
+using ProjectAstra.Web.PlanetApi.Core.Interfaces;
+using ProjectAstra.Web.PlanetApi.Core.Services;
+using ProjectAstra.Web.PlanetApi.Core.Validators;
 using ProjectAstra.Web.PlanetApi.Infrastructure.Data;
+using ProjectAstra.Web.PlanetApi.Infrastructure.Repositories;
 
 namespace ProjectAstra.Web.PlanetApi.Presentation
 {
@@ -44,10 +48,15 @@ namespace ProjectAstra.Web.PlanetApi.Presentation
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGet("/", async context => { await context.Response.WriteAsync("Hello World!"); });
+                endpoints.MapDefaultControllerRoute();
             });
         }
         private void ResolveDependencies(IServiceCollection services)
         {
+            services.AddScoped<ISolarSystemService, SolarSystemService>();
+            services.AddScoped<ISolarSystemRepository, SolarSystemRepository>();
+            services.AddSingleton<ISolarSystemValidator, SolarSystemValidator>();
+            
             services.AddDbContext<DataContext>(options =>
             {
                 options.UseMySql(Configuration.GetConnectionString("DefaultConnection"),

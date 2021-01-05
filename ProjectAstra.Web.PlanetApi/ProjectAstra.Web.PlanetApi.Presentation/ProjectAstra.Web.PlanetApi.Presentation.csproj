@@ -17,10 +17,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\ProjectAstra.Web.PlanetApi.Infrastructure\ProjectAstra.Web.PlanetApi.Infrastructure.csproj" />
     </ItemGroup>
 
