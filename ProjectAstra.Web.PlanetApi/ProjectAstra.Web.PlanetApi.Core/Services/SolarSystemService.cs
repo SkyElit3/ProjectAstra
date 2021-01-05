@@ -16,11 +16,14 @@ namespace ProjectAstra.Web.PlanetApi.Core.Services
     {
         private readonly ISolarSystemRepository _repository;
         private readonly ISolarSystemValidator _solarSystemValidator;
+        private readonly IPlanetRepository _planetRepository;
 
-        public SolarSystemService(ISolarSystemRepository repository, ISolarSystemValidator solarSystemValidator)
+        public SolarSystemService(ISolarSystemRepository repository, ISolarSystemValidator solarSystemValidator,
+            IPlanetRepository planetRepository)
         {
             _repository = repository;
             _solarSystemValidator = solarSystemValidator;
+            _planetRepository = planetRepository;
         }
 
         public async Task<List<SolarSystem>> GetAllSolarSystems(string toSearch, List<Guid> guids, int pagination = 50,
@@ -63,8 +66,8 @@ namespace ProjectAstra.Web.PlanetApi.Core.Services
         {
             var solarSystemsToDelete = await _repository.GetAllSolarSystems(
                 new SolarSystemFilter {ToSearch = toSearch, Ids = guids, PerfectMatch = true});
-            
-            if(!EnumerableExtensions.Any(solarSystemsToDelete))
+
+            if (!EnumerableExtensions.Any(solarSystemsToDelete))
                 throw new PlanetApiException
                 {
                     ExceptionMessage = $"Solar System is not in the repository !",
@@ -73,7 +76,17 @@ namespace ProjectAstra.Web.PlanetApi.Core.Services
                 };
             foreach (var solarSystem in solarSystemsToDelete)
             {
-                // todo : check if any planets are in the deleted solar system
+                var sameSolarSystemIdPlanets = await _planetRepository.GetAllPlanets(
+                    new PlanetFilter {SystemId= solarSystem.Id});
+                if (sameSolarSystemIdPlanets.Any())
+                    throw new PlanetApiException
+                    {
+                        ExceptionMessage =
+                            $"Planets still contain the solar system id {solarSystem.Id}. Delete them before removing the solar system.",
+                        Severity = ExceptionSeverity.Error,
+                        Type = ExceptionType.ServiceException
+                    };
+
                 await _repository.DeleteSolarSystem(solarSystem.Id);
             }
 
@@ -86,7 +99,7 @@ namespace ProjectAstra.Web.PlanetApi.Core.Services
 
             var sameIdSolarSystems = await _repository.GetAllSolarSystems(
                 new SolarSystemFilter {Ids = new List<Guid> {inputSolarSystem.Id}});
-            if(sameIdSolarSystems.Count != 1)
+            if (sameIdSolarSystems.Count != 1)
                 throw new PlanetApiException
                 {
                     ExceptionMessage = $"Solar System with id {inputSolarSystem.Id} to update has not been found !",
@@ -97,10 +110,11 @@ namespace ProjectAstra.Web.PlanetApi.Core.Services
             {
                 var sameNameSolarSystems = await _repository.GetAllSolarSystems(
                     new SolarSystemFilter {ToSearch = inputSolarSystem.Name, PerfectMatch = true});
-                if(sameNameSolarSystems.Any())
+                if (sameNameSolarSystems.Any())
                     throw new PlanetApiException
                     {
-                        ExceptionMessage = $"Cannot update solar system name to one that already exists : {inputSolarSystem.Name}.",
+                        ExceptionMessage =
+                            $"Cannot update solar system name to one that already exists : {inputSolarSystem.Name}.",
                         Severity = ExceptionSeverity.Error,
                         Type = ExceptionType.ServiceException
                     };

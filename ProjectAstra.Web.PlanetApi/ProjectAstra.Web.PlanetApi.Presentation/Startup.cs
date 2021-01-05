@@ -57,6 +57,10 @@ namespace ProjectAstra.Web.PlanetApi.Presentation
             services.AddScoped<ISolarSystemRepository, SolarSystemRepository>();
             services.AddSingleton<ISolarSystemValidator, SolarSystemValidator>();
             
+            services.AddScoped<IPlanetService, PlanetService>();
+            services.AddScoped<IPlanetRepository, PlanetRepository>();
+            services.AddSingleton<IPlanetValidator, PlanetValidator>();
+            
             services.AddDbContext<DataContext>(options =>
             {
                 options.UseMySql(Configuration.GetConnectionString("DefaultConnection"),
